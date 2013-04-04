@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken'>/**
+</span> * Contains references to the success and failure methods of an object making a service call.
+ * It also contains a reference to the object using the AsyncToken (which has the success and failure methods).
+ */
+Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-property-id'>    /**
+</span>     * TODO
+     */
+    id: null,
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-property-responder'>    /**
+</span>     * TODO
+     */
+    responder: null,
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-constructor'>    /**
+</span>     * The constructor creates a AsyncToken object with a success and failure method reference, as well as
+     * scope reference to the object that creates it.
+     */
+    constructor: function()
+    {
+        this.id = this.randomUUID();
+    },
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-addResponder'>    /**
+</span>     * TODO
+     *
+     * @param {FlowMVC.mvc.service.rpc.Responder} responder
+     */
+    addResponder: function(responder) {
+        this.responder = responder;
+    },
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-applySuccess'>    /**
+</span>     * TODO
+     *
+     * @param {Object} response
+     */
+    applySuccess: function(response) {
+
+        var callbackFunction;
+        var scope;
+
+        callbackFunction = this.responder.success;
+        scope = this.responder.scope;
+
+        if(callbackFunction) {
+            callbackFunction.call(scope, response);
+        }
+    },
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-applyFailure'>    /**
+</span>     * TODO
+     *
+     * @param {Object} response
+     */
+    applyFailure: function(response) {
+
+        var callbackFunction;
+        var scope;
+
+        callbackFunction = this.responder.failure;
+        scope = this.responder.scope;
+
+        if(callbackFunction) {
+            callbackFunction.call(scope, response);
+        }
+    },
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-applyResponderMethod'>    /**
+</span>     * Examines the responder set for the service and attempts to execute the specified callback
+     * function and pass it the response.
+     *
+     * @param {Object} response          The data packet from the service response.
+     * @param responderMethod   The string property name of the responder's 'success' or 'failure' property.
+     *                          Allows for hash lookup of custom defined callback methods.
+     */
+    applyResponderMethod: function(response, responderMethod) {
+        FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: &quot;, responderMethod);
+
+        var callbackFunction = null;
+
+        if(this.getResponder() &amp;&amp; this.getResponder().scope)
+        {
+            var scope = this.getResponder().scope;
+
+            if(this.getResponder()[responderMethod]) {
+                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's custom defined &quot; + responderMethod + &quot; callback&quot;);
+                callbackFunction = this.getResponder()[responderMethod];
+            } else if(typeof scope[responderMethod] === &quot;function&quot;) {
+                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's default &quot; + responderMethod + &quot; callback&quot;);
+                callbackFunction = scope[responderMethod];
+            } else {
+//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
+                throw new Error(
+                    &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+                        CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+                );
+            }
+
+            FlowMVC.mvc.service.AbstractService.logger.groupEnd();
+
+            // execute the callback
+            callbackFunction.call(scope, response);
+
+            this.setResponder(null);
+
+        } else {
+//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
+            throw new Error(
+                &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+            );
+
+        }
+    },
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-randomUUID'>    /**
+</span>     * Create and return a &quot;version 4&quot; RFC-4122 UUID string.
+     *
+     * randomUUID.js - Version 1.0
+     *
+     * Copyright 2008, Robert Kieffer
+     *
+     * This software is made available under the terms of the Open Software License
+     * v3.0 (available here: http://www.opensource.org/licenses/osl-3.0.php )
+     *
+     * The latest version of this file can be found at:
+     * http://www.broofa.com/Tools/randomUUID.js
+     *
+     * For more information, or to comment on this, please go to:
+     * http://www.broofa.com/blog/?p=151
+     *
+     * @private
+     */
+    randomUUID: function() {
+        var s = [], itoh = '0123456789ABCDEF';
+
+        // Make array of random hex digits. The UUID only has 32 digits in it, but we
+        // allocate an extra items to make room for the '-'s we'll be inserting.
+        for (var i = 0; i &lt;36; i++) s[i] = Math.floor(Math.random()*0x10);
+
+        // Conform to RFC-4122, section 4.4
+        s[14] = 4;  // Set 4 high bits of time_high field to version
+        s[19] = (s[19] &amp; 0x3) | 0x8;  // Specify 2 high bits of clock sequence
+
+        // Convert to hex chars
+        for (var j = 0; j &lt;36; j++) s[j] = itoh[s[j]];
+
+        // Insert '-'s
+        s[8] = s[13] = s[18] = s[23] = '-';
+
+        return s.join('');
+    }
+
+});
+
+</pre>
+</body>
+</html>

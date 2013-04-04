@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+<span id='FlowMVC-mvc-service-AbstractService'>/**
+</span> * The base class for services. Provides some helper methods for calling the successful and failed callbacks
+ * provided by the client object using this service.
+ *
+ * In order to use this object and ensure the callbacks work correctly, please follow these steps:
+ *
+ * Get a reference to your service and set the responder on it like:
+ *
+ * var service = this.getAuthenticationService(); // DeftJS injection
+ *
+ * or
+ *
+ * var service = Ext.create(&quot;CafeTownsend.service.AuthenticationService&quot;); // traditional instance creation
+ *
+ * var responder = Ext.create(&quot;FlowMVC.mvc.service.rpc.Responder&quot;, this.logoutSuccess, this.logoutFailure, this);
+ * service.setResponder(responder);
+ *
+ * or
+ *
+ * service.setResponder({
+ *      success: me.loginSuccess,
+ *      fault: me.loginFailure,
+ *      scope: me
+ * });
+ *
+ * Where &quot;me&quot; is usually this in the object using the service.
+ */
+Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
+
+    requires: [
+        &quot;FlowMVC.mvc.service.rpc.Responder&quot;,
+        &quot;FlowMVC.mvc.service.rpc.ResponderError&quot;,
+        &quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;
+    ],
+
+    statics: {
+<span id='FlowMVC-mvc-service-AbstractService-property-logger'>        /**
+</span>         * The logger for the object.
+         */
+        logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.service.AbstractService&quot;),
+
+<span id='FlowMVC-mvc-service-AbstractService-property-NO_RESPONDER_DEFINED'>        /**
+</span>         * Error message for no responder defined.
+         */
+        NO_RESPONDER_DEFINED:
+            &quot;You must provide a responder object to the service that contains either a custom defined &quot; +
+            &quot;success method that exists on the service's caller or a default 'success()' or 'failure()' callback.&quot; +
+            &quot;Set the responder on the object by doing:\n&quot; +
+            &quot;var responder = Ext.create('FlowMVC.mvc.service.rpc.Responder', this.myCustomSuccess, this.myCustomFailure, this);\n&quot; +
+            &quot;service.setResponder(responder);\n&quot; +
+            &quot;or\n&quot; +
+            &quot;service.setResponder({ success: this.myCustomSuccess, fault: this.myCustomFailure, scope: this});&quot;
+    },
+
+    config: {
+
+<span id='FlowMVC-mvc-service-AbstractService-cfg-usePromise'>        /**
+</span>         * @cfg {Boolean} usePromise Flag indicating if the service should use promises.
+         * @accessor
+         */
+        usePromise: false,
+
+<span id='FlowMVC-mvc-service-AbstractService-cfg-responder'>        /**
+</span>         * @cfg {FlowMVC.mvc.service.rpc.Responder} responder The responder object for this service contains
+         * custom success and failure callback methods.
+         * @accessor
+         */
+        responder: null
+    },
+
+<span id='FlowMVC-mvc-service-AbstractService-method-applyResponderMethod'>    /**
+</span>     * Examines the responder set for the service and attempts to execute the specified callback
+     * function and pass it the response.
+     *
+     * @param {Object} response The data packet from the service response.
+     * @param {Function} responderMethod The string property name of the responder's 'success' or 'failure' property.
+     * Allows for hash lookup of custom defined callback methods.
+     */
+    applyResponderMethod: function(response, responderMethod) {
+        FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: &quot;, responderMethod);
+
+        var callbackFunction = null;
+
+        if(this.getResponder() &amp;&amp; this.getResponder().scope)
+        {
+            var scope = this.getResponder().scope;
+
+            if(this.getResponder()[responderMethod]) {
+                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's custom defined &quot; + responderMethod + &quot; callback&quot;);
+                callbackFunction = this.getResponder()[responderMethod];
+            } else if(typeof scope[responderMethod] === &quot;function&quot;) {
+                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's default &quot; + responderMethod + &quot; callback&quot;);
+                callbackFunction = scope[responderMethod];
+            } else {
+//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
+                throw new Error(
+                    &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+                );
+            }
+
+            FlowMVC.mvc.service.AbstractService.logger.groupEnd();
+
+            // execute the callback
+            callbackFunction.call(scope, response);
+
+            this.setResponder(null);
+
+        } else {
+//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
+            throw new Error(
+                &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+                CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+            );
+
+        }
+    },
+
+<span id='FlowMVC-mvc-service-AbstractService-method-success'>    /**
+</span>     * Default handler for service's successful execution. Relies on the applyResponderMethod() to
+     * actually call the service's client object's (object that used the service) success handler.
+     *
+     * @param response  The data packet response from the successful service call.
+     */
+    success: function(response, token) {
+//        FlowMVC.mvc.service.AbstractService.logger.group(&quot;AbstractService.success&quot;, true);
+        FlowMVC.mvc.service.AbstractService.logger.info(&quot;success&quot;);
+        FlowMVC.mvc.service.AbstractService.logger.info(response);
+
+        // if the service response isn't successful just kick this over to the fault handler
+        if((response.success != null) &amp;&amp; (response.success !== true)) {
+            this.failure(response, token);
+            return;
+        }
+
+        FlowMVC.mvc.service.AbstractService.logger.groupEnd();
+
+        if(token &amp;&amp; (token instanceof FlowMVC.mvc.service.rpc.AsyncToken)) {
+            token.applySuccess(response);
+        } else if(token &amp;&amp; (token instanceof Deft.promise.Deferred)) {
+            token.resolve(response);
+        } else {
+            this.applyResponderMethod(response, &quot;success&quot;);
+        }
+    },
+
+<span id='FlowMVC-mvc-service-AbstractService-method-failure'>    /**
+</span>     * Default handler for service's failed execution. Relies on the applyResponderMethod() to
+     * actually call the service's client object's (object that used the service) failure handler.
+     *
+     * @param response  The data packet response from the failed service call.
+     */
+    failure: function(response, token) {
+        FlowMVC.mvc.service.AbstractService.logger.info(&quot;failure&quot;);
+        FlowMVC.mvc.service.AbstractService.logger.groupEnd();
+
+        if(token &amp;&amp; (token instanceof FlowMVC.mvc.service.rpc.AsyncToken)) {
+            token.applyFailure(response);
+        } else if(token &amp;&amp; (token instanceof Deft.promise.Deferred)) {
+            deferred.reject(&quot;There was a service error.&quot;);
+        } else {
+            this.applyResponderMethod(response, &quot;failure&quot;);
+        }
+    }
+});
+
+</pre>
+</body>
+</html>

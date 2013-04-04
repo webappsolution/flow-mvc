@@ -5,7 +5,7 @@
     <!-- Build ===================================================== -->
     <target
         name="build"
-        depends="init, concatenate, minify"
+        depends="init, concatenate, minify, docs"
         description="Builds debug and deployment versions of the framework."
         >
 
@@ -83,7 +83,7 @@
         description="Generates JSDuck API documentation."
         >
 
-        <condition property="jsDuckExecutable" value="jsduck.exe">
+        <condition property="jsDuckExecutable" value="${jsduck.dir}/jsduck.exe">
             <os family="windows"/>
         </condition>
         <!-- JSDuck on *nix requires a Ruby gem to be installed. See https://github.com/senchalabs/jsduck -->
@@ -91,16 +91,24 @@
             <os family="unix"/>
         </condition>
 
-        <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="./docs" />
-        </delete>
+        <echo message="Deleting docs directory..." />
+        <delete dir="docs" failOnError="false" includeEmptyDirs="true" />
+        <echo message="Deleted docs directory." />
+
+        <echo message="Creating docs directory..." />
+        <mkdir dir="docs" />
+        <echo message="Created docs directory." />
+
+        <!--<delete includeemptydirs="true" failonerror="false">-->
+            <!--<fileset dir="./docs" />-->
+        <!--</delete>-->
 
         <!-- For some reason, deleting and re-adding the docs folder often causes a write error. A slight delay usually avoids this. -->
         <sleep seconds="2"/>
 
         <echo message="Generating API documentation..." />
-        <exec executable="tools/${jsDuckExecutable}" timeout="20000" failonerror="false">
-            <arg line='--warnings=-all --ext-namespaces=Ext --output=docs --ignore-global --title="FlowMVC - API Documentation" src/js' />
+        <exec executable="${jsDuckExecutable}" timeout="20000" failonerror="false">
+            <arg line='--warnings=-all --ext-namespaces=Ext --output=docs --ignore-global --title="FlowMVC - API Documentation" src' />
             <arg line='--head-html="&lt;style type=text/css&gt;.class-categories .section .left-column{float:left;width:350px;margin-left:20px} .class-categories .section .middle-column{float:left;width:350px} .class-categories .section .right-column{float:left;width:350px}&lt;/style&gt;"' />
         </exec>
 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock'>/**
+</span> * The base class for mock services adds a delay to the mock asynchronous network call in milliseconds.
+ */
+Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
+    extend: &quot;FlowMVC.mvc.service.AbstractService&quot;,
+
+    statics: {
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-property-logger'>        /**
+</span>         * The logger for the object.
+         */
+        logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;),
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-property-DELAY_IN_MILLISECONDS'>        /**
+</span>         * {Number} DELAY_IN_MILLISECONDS The default delay of 3 seconds for mock services.
+         */
+        DELAY_IN_MILLISECONDS: 3000
+    },
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-delayedSuccess'>    /**
+</span>     * Used by mock services to call a successful mock service callback with a time delay to mimic network traffic.
+     *
+     * @param {*} response Contains the data packet from the successful service response.
+     * @param {Number} delayInMilliSeconds The number of milliseconds to delay the mock service callback.
+     */
+    delayedSuccess: function(response, delayInMilliSeconds) {
+        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;delayedSuccess&quot;);
+
+        var token;
+        var me;
+
+        token = this.getTokenOrPromise();
+        me = this;
+
+        // Using a delayed task in order to give the hide animation above
+        // time to finish before executing the next steps.
+        var task = Ext.create(&quot;Ext.util.DelayedTask&quot;, function() {
+            me.success(response, token);
+        });
+
+        delayInMilliSeconds = this.getDelayInMilliSeconds(delayInMilliSeconds);
+        task.delay(delayInMilliSeconds);
+
+        return (token.promise) ? token.promise : token;
+    },
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-delayedFailure'>    /**
+</span>     * Used by mock services to call a failed mock service callback with a time delay to mimic network traffic.
+     *
+     * @param {*} response Contains the data packet from the failed service response.
+     * @param {Number} delayInMilliSeconds The number of milliseconds to delay the mock service callback.
+     */
+    delayedFailure: function(response, delayInMilliSeconds) {
+        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;delayedFailure&quot;);
+
+        var token;
+        var me;
+
+        token = this.getTokenOrPromise();
+        me = this;
+
+        // Using a delayed task in order to give the hide animation above
+        // time to finish before executing the next steps.
+        var task = Ext.create(&quot;Ext.util.DelayedTask&quot;, function() {
+            me.failure(response, token);
+        });
+
+        delayInMilliSeconds = this.getDelayInMilliSeconds(delayInMilliSeconds);
+        task.delay(delayInMilliSeconds);
+
+        return (token.promise) ? token.promise : token;
+    },
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getTokenOrPromise'>    /**
+</span>     * TODO
+     *
+     * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
+     * Promise
+     */
+    getTokenOrPromise: function() {
+        var token;
+
+        if(this.getUsePromise()) {
+            token = Ext.create(&quot;Deft.promise.Deferred&quot;);
+        } else {
+            token = Ext.create(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;);
+        }
+
+        return token;
+    },
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getDelayInMilliSeconds'>    /**
+</span>     * Helper method used to get the number of milliseconds to delay the mock service callback.
+     *
+     * @param {Number} delayInMilliSeconds The number of milliseconds to delay the mock service callback.
+     * @return {Number} The number of milliseconds to delay the mock service callback.
+     */
+    getDelayInMilliSeconds: function(delayInMilliSeconds) {
+        delayInMilliSeconds =
+            (delayInMilliSeconds == null)
+            ? FlowMVC.mvc.service.mock.AbstractServiceMock.DELAY_IN_MILLISECONDS
+            : delayInMilliSeconds;
+
+        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;getDelayInMilliSeconds: &quot; + delayInMilliSeconds);
+        return delayInMilliSeconds;
+    },
+
+<span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getRandomInt'>    /**
+</span>     * Helper method to create random numbers within a given range. Helpful for mocking data.
+     *
+     * @param {Number} min The minimum or low end of the range.
+     * @param {Number} max The maximum or high end of the range.
+     * @return {Number} The random generated number.
+     */
+    getRandomInt: function(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+});
+
+</pre>
+</body>
+</html>

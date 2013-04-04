@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+<span id='FlowMVC-mvc-service-rpc-ResponderError'>/**
+</span> * The authentication event contains username and password information to login the user.
+ * Contains event types for login and logout.
+ *
+ * TODO: BMR: 02/20/2013: Need to make this work. Not being used right now.
+ * TODO: BMR: 02/22/13: Consider moving this to a WASI package so it's not part of this project.
+ */
+Ext.define(&quot;FlowMVC.mvc.service.rpc.ResponderError&quot;, {
+
+    extend: &quot;Error&quot;,
+
+    statics: {
+<span id='FlowMVC-mvc-service-rpc-ResponderError-property-NO_RESPONDER_DEFINED'>        NO_RESPONDER_DEFINED:
+</span>                &quot;You must provide a responder object to the service that contains either a custom defined &quot; +
+                &quot;success method that exists on the service's caller or a default 'success()' callback.\n&quot; +
+                &quot;Set the responder on the object by doing:\n&quot; +
+                &quot;var responder = Ext.create('FlowMVC.mvc.service.rpc.Responder', this.logoutSuccess, this.logoutFailure, this);\n&quot; +
+                &quot;service.setResponder(responder);&quot; +
+                &quot;or\n&quot; +
+                &quot;service.setResponder({ success: me.mySuccess, fault: me.myFailure, scope: me});&quot;
+    },
+
+<span id='FlowMVC-mvc-service-rpc-ResponderError-method-constructor'>    constructor: function(msg)
+</span>    {
+        msg =
+            &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+            msg;
+
+        this.callParent(msg);
+
+
+    }
+});</pre>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+<span id='FlowMVC-mvc-event-AbstractEvent'>/**
+</span> * The base event used for all application-level event bus messaging; the type property defines the event name
+ * or type that drives the event dispatching.
+ */
+Ext.define(&quot;FlowMVC.mvc.event.AbstractEvent&quot;, {
+
+    statics: {
+
+<span id='FlowMVC-mvc-event-AbstractEvent-property-logger'>        /**
+</span>         * The logger for the object.
+         */
+        logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.event.AbstractEvent&quot;),
+
+<span id='FlowMVC-mvc-event-AbstractEvent-property-ERROR_TYPE_MUST_BE_VALID_STRING'>        /**
+</span>         *
+         */
+        ERROR_TYPE_MUST_BE_VALID_STRING: &quot;the parameter 'type' cannot be null or an empty string.&quot;
+    },
+
+<span id='FlowMVC-mvc-event-AbstractEvent-property-type'>    /**
+</span>     * The event type or string name of the event.
+     */
+    type: &quot;&quot;,
+
+<span id='FlowMVC-mvc-event-AbstractEvent-property-data'>    /**
+</span>     * A generic data property for any event.
+     */
+    data: null,
+
+<span id='FlowMVC-mvc-event-AbstractEvent-method-constructor'>    /**
+</span>     * Constructor.
+     *
+     * @param {String} type The event type or string name of the event; this is the token client objects subscribe to
+     * when listening for application-level events.
+     */
+    constructor: function(type) {
+        if( (type == null) || (type == &quot;&quot;) || (typeof type !== &quot;string&quot;) ) {
+            throw new Error(FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING);
+        }
+        FlowMVC.mvc.event.AbstractEvent.logger.debug(&quot;AbstractEvent.Constructor: type = &quot;, type);
+        this.type = type;
+    }
+});</pre>
+</body>
+</html>
