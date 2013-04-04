@@ -1,7 +1,56 @@
-<!DOCTYPE html>
 <html>
 <head>
-    <title>Jasmine Spec Runner</title>
+    <title>FlowMVC Jasmine Unit Tests</title>
+
+    <!-- Jasmine -->
+    <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
+    <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>
+    <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>
+
+    <!-- Libraries -->
+    <script type="text/javascript" charset="utf-8" src="http://cdn.sencha.io/ext-4.1.1-gpl/ext-all-dev.js"></script>
+    <script type="text/javascript" src="lib/deft-0.8.8/deft-debug.js"></script>
+    <script type="text/javascript" src="lib/log4javascript-1.4.5/log4javascript.js"></script>
+    <script type="text/javascript" src="../build/flowmvc-debug.js"></script>
+
+    <!-- Classes to be tested / dependencies -->
+    <!--<script type="text/javascript" src="../../../lib/flow-mvc-0.1.0/FlowMVC/mvc/store/AbstractStore.js"></script>-->
+    <!--<script type="text/javascript" src="../../../app/model/EmployeeModel.js"></script>-->
+    <!--<script type="text/javascript" src="../../../app/store/EmployeeStore.js"></script>-->
+
+    <!-- UNIT TEST CLASSES -->
+    <script type="text/javascript" src="FlowMVC/mvc/event/AbstractEvent.js"></script>
+
+</head>
+<body>
+
+<div id="test"></div>
+
+<script type="text/javascript">
+    var jasmineEnv = jasmine.getEnv();
+    var trivialReporter = new jasmine.TrivialReporter();
+
+    jasmineEnv.updateInterval = 1000;
+
+    jasmineEnv.addReporter(trivialReporter);
+
+    jasmineEnv.specFilter = function(spec) {
+        return trivialReporter.specFilter(spec);
+    };
+
+    jasmineEnv.execute();
+</script>
+
+</body>
+</html>
+
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+    <!--<title>Jasmine Spec Runner</title>-->
 
     <style>
         .currentVersion {margin-top: 5px; font-weight: bold; font-size: x-large;}
@@ -13,105 +62,101 @@
         .platformLinks a:active {color:#006400}  /* selected link */
     </style>
 
-    <!-- Jasmine -->
-    <link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css">
-    <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
-    <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
+    <!--&lt;!&ndash; Jasmine &ndash;&gt;-->
+    <!--<link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">-->
+    <!--<script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>-->
+    <!--<script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>-->
 
-    <!-- Include Sencha libs based on passed URL params. -->
-    <script type="text/javascript">
-        function getUrlVars() {
-            var vars = {};
-            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-                vars[key] = value;
-            });
-            return vars;
-        }
+    <!--&lt;!&ndash; Libraries &ndash;&gt;-->
+    <!--<script type="text/javascript" src="lib/deft-0.8.8/deft-debug.js"></script>-->
+    <!--<script type="text/javascript" src="lib/log4javascript-1.4.5/log4javascript.js"></script>-->
 
-        var platform = getUrlVars()["platform"];
-        var version = getUrlVars()["version"];
-        var newcdn = getUrlVars()["newcdn"];
-        var senchaUrl = "http://cdn.sencha.io/";
-        var currentVersionMessage = "";
+    <!--&lt;!&ndash; Include Sencha libs based on passed URL params. &ndash;&gt;-->
+    <!--<script type="text/javascript">-->
+        <!--function getUrlVars() {-->
+            <!--var vars = {};-->
+            <!--var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {-->
+                <!--vars[key] = value;-->
+            <!--});-->
+            <!--return vars;-->
+        <!--}-->
 
-        if ((typeof platform !== "undefined" && platform !== null) && (typeof version !== "undefined" && version !== null)) {
-            if (platform === "ext") {
-                if( newcdn === "false" ) {
-                    senchaUrl += "ext-" + version + "/ext-all.js"; //add all-dev for debug
-                }
-                else {
-                    senchaUrl += "ext/gpl/" + version + "/ext-all.js"; //add all-dev for debug
-                }
-                currentVersionMessage = "Currently using: ExtJS " + version;
-            } else {
-                senchaUrl += "touch/sencha-touch-" + version + "/sencha-touch-all.js";  //add all-debug for debug
-                currentVersionMessage = "Currently using: Sencha Touch " + version;
-            }
+        <!--var platform = getUrlVars()["platform"];-->
+        <!--var version = getUrlVars()["version"];-->
+        <!--var newcdn = getUrlVars()["newcdn"];-->
+        <!--var senchaUrl = "http://cdn.sencha.io/";-->
+        <!--var currentVersionMessage = "";-->
 
-            // Include target Sencha library.
-            document.write("<script type=\"text/javascript\" charset=\"UTF-8\" src=\"" + senchaUrl + "\"><\/script>");
+        <!--if ((typeof platform !== "undefined" && platform !== null) && (typeof version !== "undefined" && version !== null)) {-->
+            <!--if (platform === "ext") {-->
+                <!--if( newcdn === "false" ) {-->
+                    <!--senchaUrl += "ext-" + version + "/ext-all.js"; //add all-dev for debug-->
+                <!--}-->
+                <!--else {-->
+                    <!--senchaUrl += "ext/gpl/" + version + "/ext-all.js"; //add all-dev for debug-->
+                <!--}-->
+                <!--currentVersionMessage = "Currently using: ExtJS " + version;-->
+            <!--} else {-->
+                <!--senchaUrl += "touch/sencha-touch-" + version + "/sencha-touch-all.js";  //add all-debug for debug-->
+                <!--currentVersionMessage = "Currently using: Sencha Touch " + version;-->
+            <!--}-->
 
-            // Include DeftJS.
-            document.write("<script type=\"text/javascript\" charset=\"UTF-8\" src=\"../build/deft-debug.js\"><\/script>");
-        }
+            <!--// Include target Sencha library.-->
+            <!--document.write("<script type=\"text/javascript\" charset=\"UTF-8\" src=\"" + senchaUrl + "\"><\/script>");-->
 
-    </script>
+            <!--// Include FlowMVC.-->
+            <!--document.write("<script type=\"text/javascript\" charset=\"UTF-8\" src=\"../build/flowmvc-debug.js\"><\/script>");-->
+        <!--}-->
 
-    <!-- DeftJS specs -->
-    <script type="text/javascript" src="js/Deft/ioc/Injector.js"></script>
-    <script type="text/javascript" src="js/Deft/mixin/Injectable.js"></script>
-    <script type="text/javascript" src="js/Deft/mvc/ViewController.js"></script>
-    <script type="text/javascript" src="js/Deft/mixin/Controllable.js"></script>
-    <script type="text/javascript" src="js/Deft/util/Function.js"></script>
-    <script type="text/javascript" src="js/Deft/promise/Deferred.js"></script>
+    <!--</script>-->
 
-    <!-- The Promise tests can take a while to run, so temporarily comment them out
-    to speed things up (if you're not working on Promise functionality, obviously). -->
-    <script type="text/javascript" src="js/Deft/promise/Promise.js"></script>
+    <!--&lt;!&ndash; UNIT TEST CLASSES &ndash;&gt;-->
+    <!--<script type="text/javascript" src="FlowMVC/mvc/store/AbstractStore.js"></script>-->
 
-</head>
+<!--</head>-->
 
-<body>
+<!--<body>-->
 
-<script type="text/javascript">
-    if ((typeof Ext !== "undefined" && Ext !== null)) {
+<!--<script type="text/javascript">-->
+    <!--if ((typeof Ext !== "undefined" && Ext !== null)) {-->
 
-        // Tweak Jasmine's "pretty print" logic to make it aware of Sencha classes.
-        jasmine.PrettyPrinter.prototype.format = Ext.Function.createInterceptor(jasmine.PrettyPrinter.prototype.format, function (value) {
-            if (value instanceof Ext.ClassManager.get('Ext.Base')) {
-                this.emitScalar(Ext.ClassManager.getName(value));
-                return false;
-            }
-        });
+        <!--// Tweak Jasmine's "pretty print" logic to make it aware of Sencha classes.-->
+        <!--jasmine.PrettyPrinter.prototype.format = Ext.Function.createInterceptor(jasmine.PrettyPrinter.prototype.format, function (value) {-->
+            <!--if (value instanceof Ext.ClassManager.get('Ext.Base')) {-->
+                <!--this.emitScalar(Ext.ClassManager.getName(value));-->
+                <!--return false;-->
+            <!--}-->
+        <!--});-->
 
-        Ext.Loader.setConfig({
-            enabled: true
-        });
+        <!--Ext.Loader.setConfig({-->
+            <!--enabled: true-->
+        <!--});-->
 
-        Ext.onReady( function () {
-            jasmine.getEnv().addReporter(new jasmine.HtmlReporter());
-            jasmine.getEnv().execute();
-        });
-    }
+        <!--Ext.onReady( function () {-->
+            <!--console.log("Ext.onReady");-->
+            <!--jasmine.getEnv().addReporter(new jasmine.HtmlReporter());-->
+            <!--jasmine.getEnv().execute();-->
+        <!--});-->
+    <!--}-->
 
-</script>
+<!--</script>-->
 
-<div class="platformLinks">
-    Choose Target Library:
-    <a href="SpecRunner.html?platform=ext&version=4.0.7-gpl&newcdn=false">ExtJS 4.0.7</a> |
-    <a href="SpecRunner.html?platform=ext&version=4.1.0-gpl&newcdn=false">ExtJS 4.1.0</a> |
-    <a href="SpecRunner.html?platform=ext&version=4.1.1a-gpl&newcdn=false">ExtJS 4.1.1a</a> |
-    <a href="SpecRunner.html?platform=ext&version=4.2.0&newcdn=true">ExtJS 4.2.0</a> |
-    <a href="SpecRunner.html?platform=touch&version=2.0.1&newcdn=false">Touch 2.0.1</a> |
-    <a href="SpecRunner.html?platform=touch&version=2.1.0&newcdn=false">Touch 2.1.0</a> |
-    <a href="SpecRunner.html?platform=touch&version=2.1.1&newcdn=false">Touch 2.1.1</a>
-</div>
+<!--<div class="platformLinks">-->
+    <!--Choose Target Library:-->
+    <!--<a href="spec-runner.html?platform=ext&version=4.0.7-gpl&newcdn=false">ExtJS 4.0.7</a> |-->
+    <!--<a href="spec-runner.html?platform=ext&version=4.1.0-gpl&newcdn=false">ExtJS 4.1.0</a> |-->
+    <!--<a href="spec-runner.html?platform=ext&version=4.1.1a-gpl&newcdn=false">ExtJS 4.1.1a</a> |-->
+    <!--<a href="spec-runner.html?platform=ext&version=4.2.0&newcdn=true">ExtJS 4.2.0</a> |-->
+    <!--<a href="spec-runner.html?platform=touch&version=2.0.1&newcdn=false">Touch 2.0.1</a> |-->
+    <!--<a href="spec-runner.html?platform=touch&version=2.1.0&newcdn=false">Touch 2.1.0</a> |-->
+    <!--<a href="spec-runner.html?platform=touch&version=2.1.1&newcdn=false">Touch 2.1.1</a>-->
+<!--</div>-->
 
-<div class="currentVersion">
-    <script type="text/javascript">document.write( currentVersionMessage )</script>
-</div>
-<hr/>
+<!--<div class="currentVersion">-->
+    <!--<script type="text/javascript">document.write( currentVersionMessage )</script>-->
+<!--</div>-->
+<!--<hr/>-->
 
-</body>
+<!--</body>-->
 
-</html>
+<!--</html>-->
