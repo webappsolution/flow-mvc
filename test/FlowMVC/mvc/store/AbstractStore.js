@@ -5,7 +5,7 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
 
     // setup
     beforeEach(function() {
-        store = Ext.create("FlowMVC.mvc.store.AbstractStore");
+        store = Ext.create("FlowMVC.mvc.store.TestStore");
     });
 
     // teardown
@@ -21,19 +21,19 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
 
         it("should have 13 items", function() {
             var data = [
-                { id: 0,    firstName: "Tommy",   lastName: "Maintz",   phoneNumber: "508-566-6666" },
-                { id: 1,    firstName: "Rob",     lastName: "Dougan",   phoneNumber: "508-566-6666" },
-                { id: 2,    firstName: "Ed",      lastName: "Spencer",  phoneNumber: "508-566-6666" },
-                { id: 3,    firstName: "Jamie",   lastName: "Avins",    phoneNumber: "508-566-6666" },
-                { id: 4,    firstName: "Aaron",   lastName: "Conran",   phoneNumber: "508-566-6666" },
-                { id: 5,    firstName: "Dave",    lastName: "Kaneda",   phoneNumber: "508-566-6666" },
-                { id: 6,    firstName: "Jacky",   lastName: "Nguyen",   phoneNumber: "508-566-6666" },
-                { id: 7,    firstName: "Abraham", lastName: "Elias",    phoneNumber: "508-566-6666" },
-                { id: 8,    firstName: "Jay",     lastName: "Robinson", phoneNumber: "508-566-6666" },
-                { id: 9,    firstName: "Nigel",   lastName: "White",    phoneNumber: "508-566-6666" },
-                { id: 10,   firstName: "Don",     lastName: "Griffin",  phoneNumber: "508-566-6666" },
-                { id: 11,   firstName: "Nico",    lastName: "Ferrero",  phoneNumber: "508-566-6666" },
-                { id: 12,   firstName: "Jason",   lastName: "Johnston", phoneNumber: "508-566-6666" }
+                { foo: 0,    bar: "Tommy"   },
+                { foo: 1,    bar: "Rob"     },
+                { foo: 2,    bar: "Ed"      },
+                { foo: 3,    bar: "Jamie"   },
+                { foo: 4,    bar: "Aaron"   },
+                { foo: 5,    bar: "Dave"    },
+                { foo: 6,    bar: "Jacky"   },
+                { foo: 7,    bar: "Abraham" },
+                { foo: 8,    bar: "Jay"     },
+                { foo: 9,    bar: "Nigel"   },
+                { foo: 10,   bar: "Don"     },
+                { foo: 11,   bar: "Nico"    },
+                { foo: 12,   bar: "Jason"   }
             ];
             store.setData(data);
 
@@ -57,9 +57,7 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
 
             var model = {
                 id: 1,
-                firstName: "Rob",
-                lastName: "Dougan",
-                phoneNumber: "508-566-6666"
+                bar: "Rob"
             };
 
             spyOn(store, "fireEvent");
