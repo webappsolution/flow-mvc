@@ -15,7 +15,7 @@
     <!-- Init ===================================================== -->
     <target
         name="init"
-        description="Cleans the deploy directory."
+        description="Cleans the deploy  directory."
         >
 
         <echo message="Deleting build directory..." />
