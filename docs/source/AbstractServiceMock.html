@@ -106,21 +106,16 @@ Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
     },
 
 <span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getTokenOrPromise'>    /**
-</span>     * TODO
+</span>     * Accessor method that determines if this sercvice uses promises or asyn tokens.
      *
      * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
      * Promise
      */
     getTokenOrPromise: function() {
-        var token;
-
-        if(this.getUsePromise()) {
-            token = Ext.create(&quot;Deft.promise.Deferred&quot;);
-        } else {
-            token = Ext.create(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;);
-        }
-
-        return token;
+        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;getTokenOrPromise&quot;);
+        return (this.getUsePromise()) ?
+            Ext.create(&quot;Deft.promise.Deferred&quot;) :
+            Ext.create(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;);
     },
 
 <span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getDelayInMilliSeconds'>    /**

@@ -44,6 +44,7 @@
             <filelist dir="src">
                 <!-- NOTE: Order is important - driven by class dependencies. -->
                 <file name="FlowMVC/logger/Logger.js" />
+                <file name="FlowMVC/util/UIDUtil.js" />
                 <file name="FlowMVC/mvc/event/EventDispatcher.js" />
                 <file name="FlowMVC/mvc/event/AbstractEvent.js" />
                 <file name="FlowMVC/mvc/service/rpc/AsyncToken.js" />

@@ -110,6 +110,72 @@ Ext.define("FlowMVC.logger.Logger", {
  */
 
 /**
+ * Contains utilities to create unique IDs.
+ */
+Ext.define("FlowMVC.util.UIDUtil", {
+
+    statics: {
+
+        /**
+         * Create and return a "version 4" RFC-4122 UUID string.
+         *
+         * randomUUID.js - Version 1.0
+         *
+         * Copyright 2008, Robert Kieffer
+         *
+         * This software is made available under the terms of the Open Software License
+         * v3.0 (available here: http://www.opensource.org/licenses/osl-3.0.php )
+         *
+         * The latest version of this file can be found at:
+         * http://www.broofa.com/Tools/randomUUID.js
+         *
+         * For more information, or to comment on this, please go to:
+         * http://www.broofa.com/blog/?p=151
+         *
+         * TODO - need return value
+         * @return {String} A unique ID in the form of mmm.
+         */
+        randomUUID: function() {
+            var s = [], itoh = '0123456789ABCDEF';
+
+            // Make array of random hex digits. The UUID only has 32 digits in it, but we
+            // allocate an extra items to make room for the '-'s we'll be inserting.
+            for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
+
+            // Conform to RFC-4122, section 4.4
+            s[14] = 4;  // Set 4 high bits of time_high field to version
+            s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
+
+            // Convert to hex chars
+            for (var j = 0; j <36; j++) s[j] = itoh[s[j]];
+
+            // Insert '-'s
+            s[8] = s[13] = s[18] = s[23] = '-';
+            console.log(s.join(''));
+
+            return s.join('');
+        }
+    }
+});
+
+/*
+ Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
+
+ FlowMVC is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ FlowMVC is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
  * The main purpose of this class is to provide loosely coupled object communication by wrapping
  * the application-level event bus using simple, helper methods for adding, removing, and dispatching events:
  *
@@ -282,13 +348,18 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
  */
 Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 
+    requires: [
+        "FlowMVC.util.UIDUtil"
+    ],
+
     /**
-     * TODO
+     * {String} id The unique ID of the token.
      */
     id: null,
 
     /**
-     * TODO
+     * {FlowMVC.mvc.service.rpc.Responder/Object} responder The object that contains success and failure methods
+     * used for asynchronous service callbacks.
      */
     responder: null,
 
@@ -302,18 +373,20 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     },
 
     /**
-     * TODO
+     * Adds a responder to this token.
      *
-     * @param {FlowMVC.mvc.service.rpc.Responder} responder
+     * @param {FlowMVC.mvc.service.rpc.Responder} responder The object that contains success and failure methods
+     * used for asynchronous service callbacks.
      */
     addResponder: function(responder) {
         this.responder = responder;
     },
 
     /**
-     * TODO
+     * Applies the successful callback of the asynchronous action on the responder's defined success method passing
+     * it the response parameter from the action.
      *
-     * @param {Object} response
+     * @param {Object} response The data object returned from the success of the asynchronous action.
      */
     applySuccess: function(response) {
 
@@ -329,9 +402,10 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     },
 
     /**
-     * TODO
+     * Applies the failure callback of the asynchronous action on the responder's defined failure method passing
+     * it the response parameter from the action.
      *
-     * @param {Object} response
+     * @param {Object} response The data object returned from the failure of the asynchronous action.
      */
     applyFailure: function(response) {
 
@@ -392,44 +466,6 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
             );
 
         }
-    },
-
-    /**
-     * Create and return a "version 4" RFC-4122 UUID string.
-     *
-     * randomUUID.js - Version 1.0
-     *
-     * Copyright 2008, Robert Kieffer
-     *
-     * This software is made available under the terms of the Open Software License
-     * v3.0 (available here: http://www.opensource.org/licenses/osl-3.0.php )
-     *
-     * The latest version of this file can be found at:
-     * http://www.broofa.com/Tools/randomUUID.js
-     *
-     * For more information, or to comment on this, please go to:
-     * http://www.broofa.com/blog/?p=151
-     *
-     * @private
-     */
-    randomUUID: function() {
-        var s = [], itoh = '0123456789ABCDEF';
-
-        // Make array of random hex digits. The UUID only has 32 digits in it, but we
-        // allocate an extra items to make room for the '-'s we'll be inserting.
-        for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
-
-        // Conform to RFC-4122, section 4.4
-        s[14] = 4;  // Set 4 high bits of time_high field to version
-        s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
-
-        // Convert to hex chars
-        for (var j = 0; j <36; j++) s[j] = itoh[s[j]];
-
-        // Insert '-'s
-        s[8] = s[13] = s[18] = s[23] = '-';
-
-        return s.join('');
     }
 
 });
@@ -610,7 +646,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     init: function() {
         FlowMVC.mvc.controller.AbstractController.logger.debug("init");
 
-        // TODO: BMR: 01/15/13: this has bombed because this.getApplication() can == null. haven't seen since initial development
         try {
             this.setupGlobalEventListeners();
         } catch(err) {
@@ -651,8 +686,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * @param success
      * @param failure
      * @param scope
-     *
-     * TODO: BMR: 02/26/13: Currently each service can only have 1 responder at a time since the injected service is a singleton within each controller...need to fix this.
      */
     executeServiceCall: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.group("FlowMVC.mvc.controller.AbstractController.executeServiceCall");
@@ -755,7 +788,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
                 FlowMVC.mvc.controller.AbstractController.ROOT_APPLICATION = this.application;
 
             // this is if you're using Touch
-            // TODO: BMR: 02/26/13: Might need to check for touch vr 2.0+
 //            } else if(Ext.getVersion('touch')) {
             } else {
                 FlowMVC.mvc.controller.AbstractController.logger.info("AbstractController.getMVCApplication: using 'this.getApplication() because we're in Touch 2.x+'");
@@ -829,7 +861,6 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     init: function() {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("init");
 
-        // TODO: BMR: 01/15/13: this has bombed because this.getApplication() can == null. haven't seen since initial development
         try {
             this.setupGlobalEventListeners();
         } catch(err) {
@@ -872,7 +903,11 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     },
 
     /**
-     * TODO
+     * Wrapper method to adding an event handler to a selector.
+     *
+     * @param {String} selector The selector to add an event handler to.
+     * @param {Function} eventType The event type to listen to and add an event handler method to.
+     * @param {Function} handler The event handler method for the event.
      */
     addEventListenerBySelector: function(selector, eventType, handler) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("addEventListenerBySelector: selector = " + selector + " eventType = " + eventType);
@@ -887,16 +922,24 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     },
 
     /**
-     * TODO
+     * Accessor for quickly locating a view by xtype. By default, it's expected that views are singletons and
+     * there's only 1 unique instance of the view, but if there are more than the method returns an array of
+     * all components matching the specified xtype.
+     *
+     * @param {String} xtype The xtype used to query for a view in the application.
+     * @return {Object/Object[]} A single view or list of views matchig the provided xtype.
      */
-    getViewByXType: function(xtype) {
+    getViewByXType: function(xtype, isSingeltonView) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("getViewByXType: xtype = ", xtype);
 
+        var view = null;
         var viewsArray = Ext.ComponentQuery.query(xtype);
-        var view;
+
+        // default to yes, this is a singleton view and only 1 instance exists in the application
+        isSingeltonView = isSingeltonView || true;
 
         if(viewsArray) {
-            view = viewsArray[0];
+            view = isSingeltonView ? viewsArray[0] : viewsArray;
         }
 
         return view;
@@ -1186,21 +1229,16 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     },
 
     /**
-     * TODO
+     * Accessor method that determines if this sercvice uses promises or asyn tokens.
      *
      * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
      * Promise
      */
     getTokenOrPromise: function() {
-        var token;
-
-        if(this.getUsePromise()) {
-            token = Ext.create("Deft.promise.Deferred");
-        } else {
-            token = Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
-        }
-
-        return token;
+        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("getTokenOrPromise");
+        return (this.getUsePromise()) ?
+            Ext.create("Deft.promise.Deferred") :
+            Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
     },
 
     /**

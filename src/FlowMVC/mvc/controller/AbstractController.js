@@ -81,7 +81,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     init: function() {
         FlowMVC.mvc.controller.AbstractController.logger.debug("init");
 
-        // TODO: BMR: 01/15/13: this has bombed because this.getApplication() can == null. haven't seen since initial development
         try {
             this.setupGlobalEventListeners();
         } catch(err) {
@@ -122,8 +121,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * @param success
      * @param failure
      * @param scope
-     *
-     * TODO: BMR: 02/26/13: Currently each service can only have 1 responder at a time since the injected service is a singleton within each controller...need to fix this.
      */
     executeServiceCall: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.group("FlowMVC.mvc.controller.AbstractController.executeServiceCall");
@@ -226,7 +223,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
                 FlowMVC.mvc.controller.AbstractController.ROOT_APPLICATION = this.application;
 
             // this is if you're using Touch
-            // TODO: BMR: 02/26/13: Might need to check for touch vr 2.0+
 //            } else if(Ext.getVersion('touch')) {
             } else {
                 FlowMVC.mvc.controller.AbstractController.logger.info("AbstractController.getMVCApplication: using 'this.getApplication() because we're in Touch 2.x+'");

@@ -59,7 +59,6 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     init: function() {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("init");
 
-        // TODO: BMR: 01/15/13: this has bombed because this.getApplication() can == null. haven't seen since initial development
         try {
             this.setupGlobalEventListeners();
         } catch(err) {
@@ -102,7 +101,11 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     },
 
     /**
-     * TODO
+     * Wrapper method to adding an event handler to a selector.
+     *
+     * @param {String} selector The selector to add an event handler to.
+     * @param {Function} eventType The event type to listen to and add an event handler method to.
+     * @param {Function} handler The event handler method for the event.
      */
     addEventListenerBySelector: function(selector, eventType, handler) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("addEventListenerBySelector: selector = " + selector + " eventType = " + eventType);
@@ -117,16 +120,24 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     },
 
     /**
-     * TODO
+     * Accessor for quickly locating a view by xtype. By default, it's expected that views are singletons and
+     * there's only 1 unique instance of the view, but if there are more than the method returns an array of
+     * all components matching the specified xtype.
+     *
+     * @param {String} xtype The xtype used to query for a view in the application.
+     * @return {Object/Object[]} A single view or list of views matchig the provided xtype.
      */
-    getViewByXType: function(xtype) {
+    getViewByXType: function(xtype, isSingeltonView) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("getViewByXType: xtype = ", xtype);
 
+        var view = null;
         var viewsArray = Ext.ComponentQuery.query(xtype);
-        var view;
+
+        // default to yes, this is a singleton view and only 1 instance exists in the application
+        isSingeltonView = isSingeltonView || true;
 
         if(viewsArray) {
-            view = viewsArray[0];
+            view = isSingeltonView ? viewsArray[0] : viewsArray;
         }
 
         return view;
