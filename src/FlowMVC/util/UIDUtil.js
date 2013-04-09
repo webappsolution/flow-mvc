@@ -38,8 +38,7 @@ Ext.define("FlowMVC.util.UIDUtil", {
          * For more information, or to comment on this, please go to:
          * http://www.broofa.com/blog/?p=151
          *
-         * TODO - need return value
-         * @return {String} A unique ID in the form of mmm.
+         * @return {String} A unique ID in the form of C4A56B5B-AC4B-46FB-AE7D-BAF45154A95E.
          */
         randomUUID: function() {
             var s = [], itoh = '0123456789ABCDEF';

@@ -29,9 +29,9 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.AbstractEvent"),
 
         /**
-         *
+         * An error string indicating that the constructor type parameter cannot be be null or an empty string.
          */
-        ERROR_TYPE_MUST_BE_VALID_STRING: "the parameter 'type' cannot be null or an empty string."
+        ERROR_TYPE_MUST_BE_VALID_STRING: "The constructor parameter 'type' cannot be null or an empty string."
     },
 
     /**
@@ -52,7 +52,9 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
      */
     constructor: function(type) {
         if( (type == null) || (type == "") || (typeof type !== "string") ) {
-            throw new Error(FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING);
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING
+            });
         }
         FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = ", type);
         this.type = type;

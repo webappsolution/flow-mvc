@@ -29,7 +29,12 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         /**
          * The logger for the object.
          */
-        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore")
+        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore"),
+
+        /**
+         * An error string indicating that the constructor type parameter cannot be be null or an empty string.
+         */
+        ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter nust be an array or null."
     },
 
     /**
@@ -49,10 +54,19 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
      * Sets the selected record on the store and broadcasts an event with type "selectedRecordChange" with a reference
      * to the store and the selected record.
      *
-     * @param {Object/Ext.data.Model} record The record to set as selected on this store.
+     * @param {Ext.data.Model} record The record to set as selected on this store.
      */
     setSelectedRecord: function(record) {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
+
+        // the record parameter must either be null an instance of the expected model for this store
+        console.log(this.model);
+        console.log(Ext.ClassManager.get(this.model));
+        if (!(record instanceof Ext.ClassManager.get(this.model)) && (record != null)) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
+            });
+        }
 
         this._selectedRecord = record;
         this.fireEvent("selectedRecordChange", this, record);
@@ -70,17 +84,25 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
     },
 
     /**
-     * This method exists to create parity between the ExtJS and Touch SDKs, as ExtJS does not hgve a setData() method.
+     * This method exists to create parity between the ExtJS and Touch SDKs, as ExtJS does not have a setData() method.
      *
      * @param {Object[]/Ext.data.Model[]} data
      * Array of Model instances or data objects to load locally. See "Inline data" above for details.
      */
     setData: function(data) {
 
+        // the data parameter must either be null or an array
+        if (!Ext.isArray(data) && (data != null)) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
+            });
+        }
+
+        // do some quick sencha framework checking as there's no setData() in ExtJS.
         if (Ext.getVersion("extjs")) {
             FlowMVC.mvc.store.AbstractStore.logger.info("setData: using 'store.removeAll() and store.add(data)' because ExtJS 4.1 doesn't support store.setData().");
             this.removeAll();
-            if ( data ) {
+            if(data) {
                 this.add(data);
             } else {
                 this.removeAll();

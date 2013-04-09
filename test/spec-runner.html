@@ -45,7 +45,7 @@
             }
         }
 
-        function getSenchaURLSuffix() {
+        function getSenchaURLSuffix(debug) {
             return (debug == "true") ? "-debug.js" : ".js";
         }
 
@@ -60,14 +60,17 @@
         if ((typeof platform !== "undefined" && platform !== null) && (typeof version !== "undefined" && version !== null)) {
             if (platform === "ext") {
                 if( newcdn === "false" ) {
-                    senchaUrl += "ext-" + version + "/ext-all"  + getSenchaURLSuffix(debug); //add all-dev for debug
+                    //add all-dev for debug
+                    senchaUrl += "ext-" + version + "/ext-all"  + getSenchaURLSuffix(debug);
                 }
                 else {
-                    senchaUrl += "ext/gpl/" + version + "/ext-all" + getSenchaURLSuffix(debug); //add all-dev for debug
+                    //add all-dev for debug
+                    senchaUrl += "ext/gpl/" + version + "/ext-all" + getSenchaURLSuffix(debug);
                 }
                 currentVersionMessage = "Currently using: ExtJS " + version + debugMessage;
             } else {
-                senchaUrl += "touch/sencha-touch-" + version + "/sencha-touch-all" + getSenchaURLSuffix(debug);  //add all-debug for debug
+                //add all-dev for debug
+                senchaUrl += "touch/sencha-touch-" + version + "/sencha-touch-all" + getSenchaURLSuffix(debug);
                 currentVersionMessage = "Currently using: Sencha Touch " + version + debugMessage;
             }
 
@@ -78,12 +81,11 @@
     </script>
 
     <!-- Libraries -->
-    <!--<script type="text/javascript" charset="utf-8" src="http://cdn.sencha.io/ext-4.1.1-gpl/ext-all-dev.js"></script>-->
     <script type="text/javascript" src="lib/deft-0.8.8/deft-debug.js"></script>
     <script type="text/javascript" src="lib/log4javascript-1.4.5/log4javascript.js"></script>
     <script type="text/javascript" src="../build/flowmvc-debug.js"></script>
 
-    <!-- Classes to be tested / dependencies -->
+    <!-- Classes to be tested and dependencies -->
     <script type="text/javascript" src="FlowMVC/mvc/model/TestModel.js"></script>
     <script type="text/javascript" src="FlowMVC/mvc/store/TestStore.js"></script>
 

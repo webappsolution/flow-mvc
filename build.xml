@@ -6,6 +6,15 @@
     <target
         name="build"
         depends="init, concatenate, minify, docs"
+        description="Builds debug and deployment versions of the framework and JSDuck generated docs."
+        >
+
+        <echo message="Build Complete." />
+    </target>
+
+    <target
+        name="buildWithoutDocs"
+        depends="init, concatenate, minify"
         description="Builds debug and deployment versions of the framework."
         >
 

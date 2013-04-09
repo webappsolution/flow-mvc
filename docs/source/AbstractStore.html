@@ -87,17 +87,23 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
     },
 
 <span id='FlowMVC-mvc-store-AbstractStore-method-setData'>    /**
-</span>     * This method exists to create parity between the ExtJS and Touch SDKs, as ExtJS does not hgve a setData() method.
+</span>     * This method exists to create parity between the ExtJS and Touch SDKs, as ExtJS does not have a setData() method.
      *
      * @param {Object[]/Ext.data.Model[]} data
      * Array of Model instances or data objects to load locally. See &quot;Inline data&quot; above for details.
      */
     setData: function(data) {
 
+        if (!Ext.isArray(data)) {
+            Ext.Error.raise({
+                msg: &quot;Error setting data on the store -&gt; passed a non-Array.&quot;
+            });
+        }
+
         if (Ext.getVersion(&quot;extjs&quot;)) {
             FlowMVC.mvc.store.AbstractStore.logger.info(&quot;setData: using 'store.removeAll() and store.add(data)' because ExtJS 4.1 doesn't support store.setData().&quot;);
             this.removeAll();
-            if ( data ) {
+            if(data) {
                 this.add(data);
             } else {
                 this.removeAll();
