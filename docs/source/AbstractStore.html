@@ -97,8 +97,7 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
         if (Ext.getVersion(&quot;extjs&quot;)) {
             FlowMVC.mvc.store.AbstractStore.logger.info(&quot;setData: using 'store.removeAll() and store.add(data)' because ExtJS 4.1 doesn't support store.setData().&quot;);
             this.removeAll();
-            if ( data )
-            {
+            if ( data ) {
                 this.add(data);
             } else {
                 this.removeAll();
