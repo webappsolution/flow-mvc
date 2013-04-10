@@ -18,10 +18,17 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
 
     // reusable scoped variable
     var store = null;
+    var mockModel = null;
 
     // setup
     beforeEach(function() {
         store = Ext.create("FlowMVC.mvc.store.TestStore");
+        mockModel = Ext.create("FlowMVC.mvc.model.TestModel", {
+            id: 0,
+            firstName: "Tommy",
+            lastName: "Maintz",
+            phoneNumber: "508-566-6666"
+        });
     });
 
     // teardown
@@ -86,33 +93,43 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
             expect(typeof store.setSelectedRecord).toEqual("function");
         });
 
-        it("should have a selected record", function() {
+        it("should throw an error if the parameter is not a not null OR an instance of the store's model", function() {
 
-            var model = Ext.create("FlowMVC.mvc.model.TestModel", {
+            var badModel = {
                 id: 0,
                 firstName: "Tommy",
                 lastName: "Maintz",
                 phoneNumber: "508-566-6666"
-            });
+            };
 
-            store.setSelectedRecord(model);
-//            expect(store.getSelectedRecord()).toBeNull();
-//            expect(store.getSelectedRecord()).toEqual(model);
+            expect(
+                function(){ store.setSelectedRecord(badModel); }
+            ).toThrow(new Error(FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID));
+            expect(store.getSelectedRecord()).toBeNull();
         });
 
-//        it("should have raised an event for a selected record", function() {
-//
-//            var model = {
-//                id: 1,
-//                bar: "Rob"
-//            };
-//
-//            spyOn(store, "fireEvent");
-//            store.setSelectedRecord(model);
-//
-//            expect(store.fireEvent).toHaveBeenCalledWith("selectedRecordChange", store, model);
-//            expect(store.fireEvent).toHaveBeenCalledWith("selectedRecordChange", store, store.getSelectedRecord());
-//        });
+        it("should have a selected record equal to the model set on it", function() {
+
+            store.setSelectedRecord(mockModel);
+            expect(store.getSelectedRecord()).toEqual(mockModel);
+        });
+
+        it("should have a selected record added to to the store if not already in the store and autoAdd = true", function() {
+
+            store.setSelectedRecord(mockModel);
+            expect(store.data.length).toEqual(1);
+            var model = store.getById(mockModel.get("id"));
+            expect(model).toEqual(mockModel);
+        });
+
+        it("should have raised an event for a selected record with the selected record in it", function() {
+
+            spyOn(store, "fireEvent");
+            store.setSelectedRecord(mockModel);
+
+            expect(store.fireEvent).toHaveBeenCalledWith("selectedRecordChange", store, mockModel);
+            expect(store.fireEvent).toHaveBeenCalledWith("selectedRecordChange", store, store.getSelectedRecord());
+        });
 
     });
 });
