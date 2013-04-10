@@ -80,12 +80,22 @@
 
     </script>
 
-    <!-- Libraries -->
+    <!-- External Libraries -->
     <script type="text/javascript" src="lib/deft-0.8.8/deft-debug.js"></script>
     <script type="text/javascript" src="lib/log4javascript-1.4.5/log4javascript.js"></script>
-    <script type="text/javascript" src="../build/flowmvc-debug.js"></script>
 
+    <!-- NOTE: Comment this out to test independent FLowMVC classes listed below -->
+    <!--<script type="text/javascript" src="../build/flowmvc-debug.js"></script>-->
+
+    <!-- NOTE: Comment these out to test the build file -->
     <!-- Classes to be tested and dependencies -->
+    <script type="text/javascript" src="../src/FlowMVC/logger/Logger.js"></script>
+    <script type="text/javascript" src="../src/FlowMVC/util/UIDUtil.js"></script>
+    <script type="text/javascript" src="../src/FlowMVC/mvc/event/AbstractEvent.js"></script>
+    <script type="text/javascript" src="../src/FlowMVC/mvc/store/AbstractStore.js"></script>
+
+    <!-- Helper Test Classes or Implementations of Abstract Framework Classes -->
+    <!-- NOTE: Must be added in after FlowMVC include -->
     <script type="text/javascript" src="FlowMVC/mvc/model/TestModel.js"></script>
     <script type="text/javascript" src="FlowMVC/mvc/store/TestStore.js"></script>
 

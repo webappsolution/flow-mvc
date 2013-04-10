@@ -156,7 +156,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     },
 
     executeServiceCallWithAsyncToken: function(service, method, args, success, failure, scope) {
-        FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithPromises");
+        FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithAsyncToken");
 
         var responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", success, failure, scope);
         var token = method.apply(service, args);

@@ -32,9 +32,17 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore"),
 
         /**
-         * An error string indicating that the constructor type parameter cannot be be null or an empty string.
+         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+         * cannot be anything other than null or an array.
          */
-        ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter nust be an array or null."
+        ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter must be an array or null.",
+
+        /**
+         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+         * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         */
+        ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
+            "be an instance of the expected model for this store."
     },
 
     /**
@@ -60,13 +68,22 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
 
         // the record parameter must either be null an instance of the expected model for this store
-        console.log(this.model);
-        console.log(Ext.ClassManager.get(this.model));
-        if (!(record instanceof Ext.ClassManager.get(this.model)) && (record != null)) {
+        var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
+
+        if ( !(record instanceof modelClass) && (record != null) ) {
             Ext.Error.raise({
                 msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
             });
         }
+
+//        console.log(modelClass);
+//        console.log(Ext.ClassManager.get(this.model));
+//
+//        if (!(record instanceof Ext.ClassManager.get(this.model)) && (record != null)) {
+//            Ext.Error.raise({
+//                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
+//            });x
+//        }
 
         this._selectedRecord = record;
         this.fireEvent("selectedRecordChange", this, record);
