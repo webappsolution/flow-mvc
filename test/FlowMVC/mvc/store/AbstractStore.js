@@ -19,6 +19,21 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
     // reusable scoped variable
     var store = null;
     var mockModel = null;
+    var data = [
+        { id: 0,    firstName: "Tommy",   lastName: "Maintz",   phoneNumber: "508-566-6666" },
+        { id: 1,    firstName: "Rob",     lastName: "Dougan",   phoneNumber: "508-566-6666" },
+        { id: 2,    firstName: "Ed",      lastName: "Spencer",  phoneNumber: "508-566-6666" },
+        { id: 3,    firstName: "Jamie",   lastName: "Avins",    phoneNumber: "508-566-6666" },
+        { id: 4,    firstName: "Aaron",   lastName: "Conran",   phoneNumber: "508-566-6666" },
+        { id: 5,    firstName: "Dave",    lastName: "Kaneda",   phoneNumber: "508-566-6666" },
+        { id: 6,    firstName: "Jacky",   lastName: "Nguyen",   phoneNumber: "508-566-6666" },
+        { id: 7,    firstName: "Abraham", lastName: "Elias",    phoneNumber: "508-566-6666" },
+        { id: 8,    firstName: "Jay",     lastName: "Robinson", phoneNumber: "508-566-6666" },
+        { id: 9,    firstName: "Nigel",   lastName: "White",    phoneNumber: "508-566-6666" },
+        { id: 10,   firstName: "Don",     lastName: "Griffin",  phoneNumber: "508-566-6666" },
+        { id: 11,   firstName: "Nico",    lastName: "Ferrero",  phoneNumber: "508-566-6666" },
+        { id: 12,   firstName: "Jason",   lastName: "Johnston", phoneNumber: "508-566-6666" }
+    ];
 
     // setup
     beforeEach(function() {
@@ -34,25 +49,12 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
     // teardown
     afterEach(function() {
         store = null;
+        mockModel = null;
     });
 
     describe("setData() method", function() {
 
-        var data = [
-            { id: 0,    firstName: "Tommy",   lastName: "Maintz",   phoneNumber: "508-566-6666" },
-            { id: 1,    firstName: "Rob",     lastName: "Dougan",   phoneNumber: "508-566-6666" },
-            { id: 2,    firstName: "Ed",      lastName: "Spencer",  phoneNumber: "508-566-6666" },
-            { id: 3,    firstName: "Jamie",   lastName: "Avins",    phoneNumber: "508-566-6666" },
-            { id: 4,    firstName: "Aaron",   lastName: "Conran",   phoneNumber: "508-566-6666" },
-            { id: 5,    firstName: "Dave",    lastName: "Kaneda",   phoneNumber: "508-566-6666" },
-            { id: 6,    firstName: "Jacky",   lastName: "Nguyen",   phoneNumber: "508-566-6666" },
-            { id: 7,    firstName: "Abraham", lastName: "Elias",    phoneNumber: "508-566-6666" },
-            { id: 8,    firstName: "Jay",     lastName: "Robinson", phoneNumber: "508-566-6666" },
-            { id: 9,    firstName: "Nigel",   lastName: "White",    phoneNumber: "508-566-6666" },
-            { id: 10,   firstName: "Don",     lastName: "Griffin",  phoneNumber: "508-566-6666" },
-            { id: 11,   firstName: "Nico",    lastName: "Ferrero",  phoneNumber: "508-566-6666" },
-            { id: 12,   firstName: "Jason",   lastName: "Johnston", phoneNumber: "508-566-6666" }
-        ];
+
         var item = data[data.length-1];
 
         it("should be a function", function() {
@@ -131,5 +133,33 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
             expect(store.fireEvent).toHaveBeenCalledWith("selectedRecordChange", store, store.getSelectedRecord());
         });
 
+    });
+
+    describe("removeAll() method", function() {
+
+        // setup
+        beforeEach(function() {
+            store.setData(data);
+        });
+
+        // teardown
+        afterEach(function() {
+            store.setData(null);
+        });
+
+        it("should be a function", function() {
+            expect(typeof store.removeAll).toEqual("function");
+        });
+
+        it("should remove all items", function() {
+            expect(store.data.length).toEqual(data.length);
+            store.removeAll();
+            expect(store.data.length).toEqual(0);
+        });
+
+        it("should have null for a selected record", function() {
+            store.removeAll();
+            expect(store.getSelectedRecord()).toBeNull();
+        });
     });
 });
