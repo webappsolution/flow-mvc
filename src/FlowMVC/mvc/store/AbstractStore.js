@@ -64,26 +64,27 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
      *
      * @param {Ext.data.Model} record The record to set as selected on this store.
      */
-    setSelectedRecord: function(record) {
+    setSelectedRecord: function(record, autoAdd) {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
 
-        // the record parameter must either be null an instance of the expected model for this store
+        // ExtJS and Touch get to the underlying model differently
         var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
 
+        // the record parameter must either be null an instance of the expected model for this store
         if ( !(record instanceof modelClass) && (record != null) ) {
             Ext.Error.raise({
-                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID
             });
         }
 
-//        console.log(modelClass);
-//        console.log(Ext.ClassManager.get(this.model));
-//
-//        if (!(record instanceof Ext.ClassManager.get(this.model)) && (record != null)) {
-//            Ext.Error.raise({
-//                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
-//            });x
-//        }
+        // default autoAdd to true
+        // TODO: create util to default values
+        autoAdd = typeof autoAdd !== "undefined" ? autoAdd : true;
+
+        // if the record isn't in the store and autoAdd is set to true, then add it
+        if( autoAdd && (this.getById(record.id) == null) ) {
+            this.add(record);
+        }
 
         this._selectedRecord = record;
         this.fireEvent("selectedRecordChange", this, record);
@@ -98,6 +99,16 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         FlowMVC.mvc.store.AbstractStore.logger.debug("getSelectedRecord");
 
         return this._selectedRecord;
+    },
+
+    /**
+     * Removes all records from the store and makes sure the selected record is null.
+     */
+    removeAll: function() {
+        FlowMVC.mvc.store.AbstractStore.logger.debug("removeAll");
+
+        this._selectedRecord = null;
+        this.callParent(arguments);
     },
 
     /**
