@@ -8,7 +8,7 @@ In addition, for enterprises looking to leverage intellectual capital across pla
 provides an application structure with reusability and portability in mind encouraging the re-use of application and
 business logic.
 
-For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the demo project,
+For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend),
 provide a level of security for enterprise architects and managers that their goals, such as well defined project
 structure, documentation, testability, localization, and re-use of resources, both human and IC, are met.
 
@@ -17,10 +17,10 @@ structure, documentation, testability, localization, and re-use of resources, bo
 ## Goals
 
 * **Familiarity**: Provides constructs and patterns familiar to users of Flex MVC-based architectures.
-* **Consistent Project Structure**: Builds on the prescriptive nature of Sencha MVC and DeftJS.
-* **Testability**: Promotes the use of Passive Views and Mediators to facilitate wide coverage per
-[Fowler](http://martinfowler.com/eaaDev/PassiveScreen.html).
-* **Reusability**: Provides further facilitation to the re-use of IC between Sencha Touch and Sencha ExtJS code bases.
+* **Consistent Project Structure**: Builds on the prescriptive nature of Sencha MVC with the suggestive design of DeftJS.
+* **Testability**: Promotes the use of Passive Views and Mediators; "with the view reduced to a dumb slave of the controller, 
+you run little risk by not testing the view." [Fowler](http://martinfowler.com/eaaDev/PassiveScreen.html).
+* **Reusability**: Provides further facilitation to the re-use of business layers between Sencha Touch and Sencha ExtJS code bases.
 
 ## Documentation Overview
 
@@ -37,6 +37,10 @@ Full documentation on the features and usage of DeftJS is available in the [Wiki
 *  [AsDoc like JSDuck Documentation](https://github.com/senchalabs/jsduck)
 *  [FlowMVC API Docs](http://www.webappsolution.com)
 *  [Resources](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources)
+
+## Examples
+
+* [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend)
 
 ## Pending Features
 
