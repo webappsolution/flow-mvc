@@ -1,10 +1,8 @@
-# CafeTownsend
+# [WASI's](http://www.webappsolution.com) FlowMVC
 
-### [WASI's](http://www.webappsolution.com) FlowMVC
-
-FlowMVC builds on the work of DeftJS, Sencha's ExtJS, and Sencha Touch APIs with extensions that enable Flex and
+FlowMVC builds on the work of [DeftJS](https://github.com/deftjs/), [Sencha ExtJS](http://www.sencha.com/products/extjs), and [Sencha Touch](http://www.sencha.com/products/touch) APIs with extensions that enable Flex and
 ActionScript developers to take their expertise and apply them to the HTML5/JavaScript world. It's a framework that
-users of Flex MVC-based architectures, such as Parley or Swiz, will be familiar with.
+users of Flex MVC-based architectures, such as Swiz or Parley, will be familiar with.
 
 In addition, for enterprises looking to leverage intellectual capital across platforms with Sencha Touch and ExtJS, it
 provides an application structure with reusability and portability in mind encouraging the re-use of application and
@@ -24,18 +22,24 @@ structure, documentation, testability, localization, and re-use of resources, bo
 [Fowler](http://martinfowler.com/eaaDev/PassiveScreen.html).
 * **Reusability**: Provides further facilitation to the re-use of IC between Sencha Touch and Sencha ExtJS code bases.
 
-
 ## Documentation Overview
 
-*  [Consistant Project Structure](wiki/Consistent-Project-Structure)
-*  [Flex like Model-View-Controller-Service](wiki/MVCS)
-*  [Flex like Dependency injection](wiki/Dependency-Injection)
-*  [Flex like Event Bus](wiki/Event-Bus)
-*  [Flex like HTTP Data Services and Mocks](wiki/Data-Services-And-Mocks)
-*  [Flex like implementation of Passive View using Mediators](wiki/Passive-View-And-Mediators)
-*  [FlexUnit like tests using Jasmine for both functional and asynchronous code blocks](wiki/Running-Unit-Tests)
-*  [Reuse of code between ExtJS and Touch versions](wiki/Reusing-Sencha-Code)
+Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/WebAppSolutionInc/flow-mvc/wiki).
+
+*  [Consistant Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
+*  [Flex like Model-View-Controller-Service](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS)
+*  [Flex like Dependency injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
+*  [Flex like Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
+*  [Flex like HTTP Data Services and Mocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Data-Services-And-Mocks)
+*  [Flex like implementation of Passive View using Mediators](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators)
+*  [FlexUnit like tests using Jasmine for both functional and asynchronous code blocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests)
+*  [Reuse of code between ExtJS and Touch versions](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code)
 *  [AsDoc like JSDuck Documentation](https://github.com/senchalabs/jsduck)
 *  [FlowMVC API Docs](http://www.webappsolution.com)
-*  [Resources](wiki/Resources)
+*  [Resources](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources)
 
+## Pending Features
+
+This effort is still ongoing with some in-progress effort that will provide the following features:
+
+*  Unit Tests with Jasmine - (In Progress)
