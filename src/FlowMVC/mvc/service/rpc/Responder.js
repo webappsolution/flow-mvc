@@ -25,6 +25,31 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
     failure:    null,
     scope:      null,
 
+    statics: {
+
+        /**
+         * The logger for the object.
+         */
+        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.Responder"),
+
+        /**
+         * {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
+         * cannot be be null or an not a function.
+         */
+        ERROR_SUCCESS_MUST_BE_VALID_FUNCTION: "The constructor parameter 'success' cannot be null or not a function.",
+        /**
+         * {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
+         * cannot be be null or an not a function.
+         */
+        ERROR_FAILURE_MUST_BE_VALID_FUNCTION: "The constructor parameter 'failure' cannot be null or not a function.",
+        /**
+         * {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
+         * cannot be be null.
+         */
+        ERROR_SCOPE_MUST_BE_VALID_OBJECT: "The constructor parameter 'scope' cannot be null or not an object"
+
+    },
+
     /**
      * The constructor creates a Responder object with a success and failure method reference, as well as
      * scope reference to the object that creates it.
@@ -35,6 +60,22 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
      */
     constructor: function(success, failure, scope)
     {
+        if( (success == null) || (typeof(success) !== "function") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_SUCCESS_MUST_BE_VALID_FUNCTION
+            });
+        }
+        if( (failure == null) || (typeof(failure) !== "function") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_FAILURE_MUST_BE_VALID_FUNCTION
+            });
+        }
+        if( (success == null) || (typeof(scope) !== "object") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_SCOPE_MUST_BE_VALID_OBJECT
+            });
+        }
+
         this.success = success;
         this.failure = failure;
         this.scope = scope;
