@@ -18,71 +18,55 @@ describe("FlowMVC.mvc.service.rpc.AsyncToken", function() {
 
     // reusable scoped variable
     var token = null;
-
-    function successFunction(){
-        "success";
-    }
-
-    function failureFunction(){
-        "failure"
-    }
-
+    var responder = null;
     var scopeObject = {};
+    var successValue = null;
+    var failureValue = null;
+
+    function successFunction(value){
+        successValue = value;
+    }
+
+    function failureFunction(value){
+        failureValue = value;
+    }
 
     // setup
     beforeEach(function() {
-
+        token = Ext.create('FlowMVC.mvc.service.rpc.AsyncToken');
+        responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", successFunction, failureFunction, this);
     });
 
     // teardown
     afterEach(function() {
-
+        token = null;
+        responder = null;
     });
 
     describe("constructor", function() {
 
 
         it("should have an id defined", function() {
-            token = Ext.create('FlowMVC.mvc.service.rpc.AsyncToken');
             expect(typeof token.id).toEqual("string");
         });
 
+        it("should have a responder defined", function() {
+            token.addResponder(responder);
+            expect(token.responder).toNotBe(null);
+            expect(token.responder.success).toEqual(successFunction);
+        });
 
+        it("success response should be hello", function() {
+            token.addResponder(responder);
+            token.applySuccess('hello');
+            expect(successValue).toEqual('hello');
+        });
 
-//        it("should throw an error if the success is null", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", null, failureFunction, scopeObject); }
-//            ).toThrow(new Error(FlowMVC.mvc.service.rpc.AsyncToken.ERROR_SUCCESS_MUST_BE_VALID_FUNCTION));
-//        });
-//
-//        it("should throw an error if the failure is not a function", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", successFunction, 100, scopeObject); }
-//            ).toThrow(new Error(FlowMVC.mvc.service.rpc.AsyncToken.ERROR_FAILURE_MUST_BE_VALID_FUNCTION));
-//        });
-//        it("should throw an error if the failure is null", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", successFunction, null, scopeObject); }
-//            ).toThrow(new Error(FlowMVC.mvc.service.rpc.AsyncToken.ERROR_FAILURE_MUST_BE_VALID_FUNCTION));
-//        });
-//
-//        it("should throw an error if the scope is not an object", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", successFunction, failureFunction, 100); }
-//            ).toThrow(new Error(FlowMVC.mvc.service.rpc.AsyncToken.ERROR_SCOPE_MUST_BE_VALID_OBJECT));
-//        });
-//        it("should throw an error if the scope is null", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", successFunction, failureFunction); }
-//            ).toThrow(new Error(FlowMVC.mvc.service.rpc.AsyncToken.ERROR_SCOPE_MUST_BE_VALID_OBJECT));
-//        });
-//
-//
-//        it("should throw no error", function() {
-//            expect(
-//                function(){ Ext.create("FlowMVC.mvc.service.rpc.AsyncToken", successFunction, failureFunction, scopeObject); }
-//            ).not.toThrow();
-//        });
+        it("failure response should be hello", function() {
+            token.addResponder(responder);
+            token.applyFailure('hello');
+            expect(successValue).toEqual('hello');
+        });
 
     });
 });
