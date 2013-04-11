@@ -94,12 +94,15 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     },
 
     /**
+     * TODO: there's a duplicate of this in FlowMVC.mvc.service.AbstractService. We need to decide where it should live.
+     * Currently the on in the service is used whereas this one is not. Where does it make the most sense?
+     *
      * Examines the responder set for the service and attempts to execute the specified callback
      * function and pass it the response.
      *
-     * @param {Object} response          The data packet from the service response.
-     * @param responderMethod   The string property name of the responder's 'success' or 'failure' property.
-     *                          Allows for hash lookup of custom defined callback methods.
+     * @param {Object} response The data packet from the service response.
+     * @param {Function} responderMethod The string property name of the responder's 'success' or 'failure' property.
+     * Allows for hash lookup of custom defined callback methods.
      */
     applyResponderMethod: function(response, responderMethod) {
         FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: ", responderMethod);
