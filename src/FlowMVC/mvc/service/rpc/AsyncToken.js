@@ -74,15 +74,9 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     applySuccess: function(response) {
 	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applySuccess");
 
-        var callbackFunction;
-        var scope;
-
-        callbackFunction = this.responder.success;
-        scope = this.responder.scope;
-
-        if(callbackFunction) {
-            callbackFunction.call(scope, response);
-        }
+	    if(this.responder) {
+		    this.applyCallback(this.responder.success, this.responder.scope, response);
+	    }
     },
 
     /**
@@ -94,16 +88,27 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     applyFailure: function(response) {
 	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyFailure");
 
-        var callbackFunction;
-        var scope;
+	    if(this.responder) {
+		    this.applyCallback(this.responder.failure, this.responder.scope, response);
+	    }
 
-        callbackFunction = this.responder.failure;
-        scope = this.responder.scope;
+    },
 
-        if(callbackFunction) {
-            callbackFunction.call(scope, response);
-        }
-    }
+	/**
+	 * Applies the callback of the asynchronous action on the responder's defined callback method passing
+	 * it the response parameter from the action.
+	 *
+	 * @param callback {Function} The callback function to execute.
+	 * @param scope {Object} The scope to execute the callback within.
+	 * @param response {Object} The scope to execute the callback within.
+	 */
+	applyCallback: function(callback, scope, response) {
+		FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyCallback");
+
+		if(callback && scope) {
+			callback.call(scope, response);
+		}
+	}
 
 });
 
