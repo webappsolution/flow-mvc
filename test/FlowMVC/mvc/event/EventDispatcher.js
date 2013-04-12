@@ -16,17 +16,12 @@
  */
 describe("FlowMVC.mvc.event.EventDispatcher", function() {
 
-    // reusable scoped variable
-    var token = null;
-    var responder = null;
-    var scopeObject = {};
-    var successValue = null;
-    var failureValue = null;
-
     var dispatcher = null;
     var wrongEventType = {};
     wrongEventType.type = 'tim';
     var listener = null;
+    var broadcaster = null;
+    var evt = null;
 
     function listenerFunction(value){
         successValue = value;
@@ -35,40 +30,39 @@ describe("FlowMVC.mvc.event.EventDispatcher", function() {
 
     // setup
     beforeEach(function() {
-        target = {
-            logger: null,
-            someOtherProperty: null,
-            config: {}
-        };
-        Deft.Injector.configure({
-
-            ////////////////////////////////////////////
-            // LOGGER
-            ////////////////////////////////////////////
-            logger:                 FlowMVC.logger.Logger.getInjectableLogger()
-        });
-
-//        Deft.ioc.Injector.inject( "logger", target );
 
         dispatcher = Ext.create('FlowMVC.mvc.event.EventDispatcher');
-//        responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", successFunction, failureFunction, this);
+        evt = Ext.create('FlowMVC.mvc.event.AbstractEvent', 'tim');
+        listener = Ext.create('FlowMVC.mvc.event.TestEventListener');
+        broadcaster = Ext.create('FlowMVC.mvc.event.TestEventBroadcaster');
+        listener.dispatcher = dispatcher;
+        broadcaster.dispatcher = dispatcher;
     });
 
     // teardown
     afterEach(function() {
         dispatcher = null;
+        evt = null;
+        listener = null;
+        broadcaster = null;
     });
 
     describe("constructor", function() {
 
-
         it("dispatcher should exist", function() {
-//            dispatcher.dispatchGlobalEvent(wrongEventType);
             expect(dispatcher).toNotBe(null);
         });
 
-        it("dispatcher logger should be injected", function() {
-            expect(dispatcher.getLogger).toNotBe(null);
+        it("event should exist", function() {
+            expect(evt).toNotBe(null);
+        });
+
+        it("listener should exist", function() {
+            expect(listener).toNotBe(null);
+        });
+
+        it("broadcaster should exist", function() {
+            expect(broadcaster).toNotBe(null);
         });
 
         it("dispatchGlobalEvent should have dispatched an event", function() {
@@ -77,31 +71,20 @@ describe("FlowMVC.mvc.event.EventDispatcher", function() {
             expect(dispatcher.fireEvent).toHaveBeenCalled();
         });
 
-//        it("dispatched Global event should be received via listenerFunction", function() {
-//            var listener = Ext.create('FlowMVC.mvc.event.TestEventListener', this);
-////            listener.init();
-//            spyOn(listener, 'handleresponse');
-//            dispatcher.dispatchGlobalEvent('dispatchedEvent');
-//            expect(listener.handleresponse).toHaveBeenCalled();
-//        });
+        it("broadcaster should have dispatched an event and listener handler should have been called", function() {
+            spyOn(listener, 'handleresponse').andCallThrough();
+            listener.listenFor(evt);
+            broadcaster.broadcastEvent(evt);
+            expect(listener.handleresponse).toHaveBeenCalled();
+        });
 
-//        it("should have a responder defined", function() {
-//            token.addResponder(responder);
-//            expect(token.responder).toNotBe(null);
-//            expect(token.responder.success).toEqual(successFunction);
-//        });
-//
-//        it("success response should be hello", function() {
-//            token.addResponder(responder);
-//            token.applySuccess('hello');
-//            expect(successValue).toEqual('hello');
-//        });
-//
-//        it("failure response should be hello", function() {
-//            token.addResponder(responder);
-//            token.applyFailure('hello');
-//            expect(successValue).toEqual('hello');
-//        });
+        //add a prop to the event and do a 'expectshit to have come through' test
+        it("broadcaster should have dispatched an event with prop set and listener handler should have been called with prop", function() {
+            spyOn(listener, 'handleresponse').andCallThrough();
+            listener.listenFor(evt);
+            broadcaster.broadcastEvent(evt);
+            expect(listener.handleresponse).toHaveBeenCalledWith(evt, {});
+        });
 
     });
 });
