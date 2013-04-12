@@ -42,6 +42,14 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
         &quot;FlowMVC.util.UIDUtil&quot;
     ],
 
+	statics: {
+
+<span id='FlowMVC-mvc-service-rpc-AsyncToken-property-logger'>		/**
+</span>		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;)
+	},
+
 <span id='FlowMVC-mvc-service-rpc-AsyncToken-property-id'>    /**
 </span>     * {String} id The unique ID of the token.
      */
@@ -59,7 +67,8 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
      */
     constructor: function()
     {
-        this.id = this.randomUUID();
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug(&quot;constructor&quot;);
+        this.id = FlowMVC.util.UIDUtil.randomUUID();
     },
 
 <span id='FlowMVC-mvc-service-rpc-AsyncToken-method-addResponder'>    /**
@@ -69,6 +78,7 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
      * used for asynchronous service callbacks.
      */
     addResponder: function(responder) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug(&quot;addResponder&quot;);
         this.responder = responder;
     },
 
@@ -79,6 +89,7 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
      * @param {Object} response The data object returned from the success of the asynchronous action.
      */
     applySuccess: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug(&quot;applySuccess&quot;);
 
         var callbackFunction;
         var scope;
@@ -98,6 +109,7 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
      * @param {Object} response The data object returned from the failure of the asynchronous action.
      */
     applyFailure: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug(&quot;applyFailure&quot;);
 
         var callbackFunction;
         var scope;
@@ -107,54 +119,6 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;, {
 
         if(callbackFunction) {
             callbackFunction.call(scope, response);
-        }
-    },
-
-<span id='FlowMVC-mvc-service-rpc-AsyncToken-method-applyResponderMethod'>    /**
-</span>     * Examines the responder set for the service and attempts to execute the specified callback
-     * function and pass it the response.
-     *
-     * @param {Object} response          The data packet from the service response.
-     * @param responderMethod   The string property name of the responder's 'success' or 'failure' property.
-     *                          Allows for hash lookup of custom defined callback methods.
-     */
-    applyResponderMethod: function(response, responderMethod) {
-        FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: &quot;, responderMethod);
-
-        var callbackFunction = null;
-
-        if(this.getResponder() &amp;&amp; this.getResponder().scope)
-        {
-            var scope = this.getResponder().scope;
-
-            if(this.getResponder()[responderMethod]) {
-                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's custom defined &quot; + responderMethod + &quot; callback&quot;);
-                callbackFunction = this.getResponder()[responderMethod];
-            } else if(typeof scope[responderMethod] === &quot;function&quot;) {
-                FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's default &quot; + responderMethod + &quot; callback&quot;);
-                callbackFunction = scope[responderMethod];
-            } else {
-//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
-                throw new Error(
-                    &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
-                        CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-                );
-            }
-
-            FlowMVC.mvc.service.AbstractService.logger.groupEnd();
-
-            // execute the callback
-            callbackFunction.call(scope, response);
-
-            this.setResponder(null);
-
-        } else {
-//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
-            throw new Error(
-                &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
-                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-            );
-
         }
     }
 

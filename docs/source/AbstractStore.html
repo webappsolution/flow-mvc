@@ -46,7 +46,20 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
 <span id='FlowMVC-mvc-store-AbstractStore-property-logger'>        /**
 </span>         * The logger for the object.
          */
-        logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.store.AbstractStore&quot;)
+        logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.store.AbstractStore&quot;),
+
+<span id='FlowMVC-mvc-store-AbstractStore-property-ERROR_SET_DATA_PARAM_NOT_VALID'>        /**
+</span>         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+         * cannot be anything other than null or an array.
+         */
+        ERROR_SET_DATA_PARAM_NOT_VALID: &quot;The setData() method's 'data' parameter must be an array or null.&quot;,
+
+<span id='FlowMVC-mvc-store-AbstractStore-property-ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID'>        /**
+</span>         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+         * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         */
+        ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: &quot;The setSelectedRecord() method's 'record' parameter must null or &quot; +
+            &quot;be an instance of the expected model for this store.&quot;
     },
 
 <span id='FlowMVC-mvc-store-AbstractStore-event-selectedRecordChange'>    /**
@@ -66,10 +79,29 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
 </span>     * Sets the selected record on the store and broadcasts an event with type &quot;selectedRecordChange&quot; with a reference
      * to the store and the selected record.
      *
-     * @param {Object/Ext.data.Model} record The record to set as selected on this store.
+     * @param {Ext.data.Model} record The record to set as selected on this store.
      */
-    setSelectedRecord: function(record) {
+    setSelectedRecord: function(record, autoAdd) {
         FlowMVC.mvc.store.AbstractStore.logger.debug(&quot;setSelectedRecord&quot;);
+
+        // ExtJS and Touch get to the underlying model differently
+        var modelClass = (Ext.getVersion(&quot;extjs&quot;)) ? this.model : this._model;
+
+        // the record parameter must either be null an instance of the expected model for this store
+        if ( !(record instanceof modelClass) &amp;&amp; (record != null) ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID
+            });
+        }
+
+        // default autoAdd to true
+        // TODO: create util to default values
+        autoAdd = typeof autoAdd !== &quot;undefined&quot; ? autoAdd : true;
+
+        // if the record isn't in the store and autoAdd is set to true, then add it
+        if( autoAdd &amp;&amp; (this.getById(record.id) == null) ) {
+            this.add(record);
+        }
 
         this._selectedRecord = record;
         this.fireEvent(&quot;selectedRecordChange&quot;, this, record);
@@ -86,6 +118,16 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
         return this._selectedRecord;
     },
 
+<span id='FlowMVC-mvc-store-AbstractStore-method-removeAll'>    /**
+</span>     * Removes all records from the store and makes sure the selected record is null.
+     */
+    removeAll: function() {
+        FlowMVC.mvc.store.AbstractStore.logger.debug(&quot;removeAll&quot;);
+
+        this._selectedRecord = null;
+        this.callParent(arguments);
+    },
+
 <span id='FlowMVC-mvc-store-AbstractStore-method-setData'>    /**
 </span>     * This method exists to create parity between the ExtJS and Touch SDKs, as ExtJS does not have a setData() method.
      *
@@ -94,12 +136,14 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
      */
     setData: function(data) {
 
-        if (!Ext.isArray(data)) {
+        // the data parameter must either be null or an array
+        if (!Ext.isArray(data) &amp;&amp; (data != null)) {
             Ext.Error.raise({
-                msg: &quot;Error setting data on the store -&gt; passed a non-Array.&quot;
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
             });
         }
 
+        // do some quick sencha framework checking as there's no setData() in ExtJS.
         if (Ext.getVersion(&quot;extjs&quot;)) {
             FlowMVC.mvc.store.AbstractStore.logger.info(&quot;setData: using 'store.removeAll() and store.add(data)' because ExtJS 4.1 doesn't support store.setData().&quot;);
             this.removeAll();

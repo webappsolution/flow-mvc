@@ -26,30 +26,13 @@
 Ext.define("FlowMVC.mvc.event.EventDispatcher", {
     extend: "Ext.util.Observable",
 
-    statics: {
+	statics: {
 
-        /**
-         * The logger for the object.
-         */
-//        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher"),
-
-        /**
-         * {String} ERROR_EVENT_NOT_PROPER_TYPE An error string indicating that the event must be of the type
-         * FlowMVC.mvc.event.AbstractEvent
-         */
-        ERROR_EVENT_NOT_PROPER_TYPE: "The event must extend FlowMVC.mvc.event.AbstractEvent.",
-
-        /**
-         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
-         * method's parameter cannot be anything other than null or an instance of the expected model for this store.
-         */
-        ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
-            "be an instance of the expected model for this store."
-    },
-
-    inject: [
-        "logger"
-    ],
+		/**
+		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher")
+	},
 
     /**
      * Allows for inter-controller communication by dispatching events on the application-level event bus.
@@ -61,20 +44,13 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * var evt = Ext.create("CafeTownsend.event.AuthenticationEvent", CafeTownsend.event.AuthenticationEvent.LOGIN, username, password);
      * this.dispatchGlobalEvent(evt);
      *
-     * @param {FlowMVC.mvc.event.AbstractEvent} event The event object to fire containing
+     * @param {FlowMVC.mvc.event.AbstractEvent/Object/String} event The event object to fire containing
      * a property called 'type' or a string representing the event name or type.
      * @param {Object...} args Variable number of parameters are passed to handlers. Optional and not usually used if
      * dispatching an event that subclasses FlowMVC.mvc.event.AbstractEvent.
      * @return {Boolean} Returns `false` if any of the handlers return `false`, otherwise it returns `true`.
      */
     dispatchGlobalEvent: function(event, args) {
-
-        // the event parameter must be non null and of type FlowMVC.mvc.event.AbstractEvent
-//        if ( (event == null) || !(event instanceof FlowMVC.mvc.event.AbstractEvent) ) {
-//            Ext.Error.raise({
-//                msg: FlowMVC.mvc.event.EventDispatcher.ERROR_EVENT_NOT_PROPER_TYPE
-//            });
-//        }
 
         if(event.type != null) {
             type = event.type;
@@ -83,7 +59,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
             type = event;
         }
 
-        this.logger.debug("dispatchGlobalEvent: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("dispatchGlobalEvent: " + type);
         return this.fireEvent(type, args);
     },
 
@@ -103,7 +79,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     addGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("addGlobalEventListener: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("addGlobalEventListener: " + type);
 
         this.addListener(type, handler, scope);
 
@@ -127,7 +103,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     removeGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("removeGlobalEventListener");
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("removeGlobalEventListener");
 
         this.removeListener(type, handler, scope)
     }

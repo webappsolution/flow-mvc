@@ -63,7 +63,6 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
 
     requires: [
         &quot;FlowMVC.mvc.service.rpc.Responder&quot;,
-        &quot;FlowMVC.mvc.service.rpc.ResponderError&quot;,
         &quot;FlowMVC.mvc.service.rpc.AsyncToken&quot;
     ],
 
@@ -126,7 +125,6 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
                 FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's default &quot; + responderMethod + &quot; callback&quot;);
                 callbackFunction = scope[responderMethod];
             } else {
-//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
                 throw new Error(
                     &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
                     CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
@@ -141,7 +139,6 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
             this.setResponder(null);
 
         } else {
-//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
             throw new Error(
                 &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
                 CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED

@@ -46,30 +46,36 @@ Ext.define(&quot;FlowMVC.mvc.event.AbstractEvent&quot;, {
         logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.event.AbstractEvent&quot;),
 
 <span id='FlowMVC-mvc-event-AbstractEvent-property-ERROR_TYPE_MUST_BE_VALID_STRING'>        /**
-</span>         *
+</span>         * {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
+         * cannot be be null or an empty string.
          */
-        ERROR_TYPE_MUST_BE_VALID_STRING: &quot;the parameter 'type' cannot be null or an empty string.&quot;
+        ERROR_TYPE_MUST_BE_VALID_STRING: &quot;The constructor parameter 'type' cannot be null or an empty string.&quot;
     },
 
 <span id='FlowMVC-mvc-event-AbstractEvent-property-type'>    /**
-</span>     * The event type or string name of the event.
+</span>     * {String} type The event type or string name of the event; this is the token client objects subscribe to
+     * when listening for application-level events.
      */
     type: &quot;&quot;,
 
 <span id='FlowMVC-mvc-event-AbstractEvent-property-data'>    /**
-</span>     * A generic data property for any event.
+</span>     * {Object} data A generic data property for any event.
      */
     data: null,
 
 <span id='FlowMVC-mvc-event-AbstractEvent-method-constructor'>    /**
 </span>     * Constructor.
      *
+     * sets the event type for the event; type must be a non-empty string.
+     *
      * @param {String} type The event type or string name of the event; this is the token client objects subscribe to
      * when listening for application-level events.
      */
     constructor: function(type) {
         if( (type == null) || (type == &quot;&quot;) || (typeof type !== &quot;string&quot;) ) {
-            throw new Error(FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING);
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING
+            });
         }
         FlowMVC.mvc.event.AbstractEvent.logger.debug(&quot;AbstractEvent.Constructor: type = &quot;, type);
         this.type = type;

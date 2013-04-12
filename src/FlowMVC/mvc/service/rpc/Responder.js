@@ -21,8 +21,19 @@
  */
 Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 
+	/**
+	 * {Function} success Reference to a method that handles a successful service.
+	 */
     success:    null,
+
+	/**
+	 * Function} failure Reference to a method that handles a failed service.
+	 */
     failure:    null,
+
+	/**
+	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 */
     scope:      null,
 
     statics: {
@@ -75,6 +86,7 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
                 msg: FlowMVC.mvc.service.rpc.Responder.ERROR_SCOPE_MUST_BE_VALID_OBJECT
             });
         }
+	    FlowMVC.mvc.service.rpc.Responder.logger.debug("constructor");
 
         this.success = success;
         this.failure = failure;
