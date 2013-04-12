@@ -18,7 +18,7 @@ describe("FlowMVC.mvc.event.EventDispatcher", function() {
 
     var dispatcher = null;
     var wrongEventType = {};
-    wrongEventType.type = 'tim';
+    wrongEventType.type = "tim";
     var listener = null;
     var broadcaster = null;
     var evt = null;
@@ -31,10 +31,10 @@ describe("FlowMVC.mvc.event.EventDispatcher", function() {
     // setup
     beforeEach(function() {
 
-        dispatcher = Ext.create('FlowMVC.mvc.event.EventDispatcher');
-        evt = Ext.create('FlowMVC.mvc.event.AbstractEvent', 'tim');
-        listener = Ext.create('FlowMVC.mvc.event.TestEventListener');
-        broadcaster = Ext.create('FlowMVC.mvc.event.TestEventBroadcaster');
+        dispatcher = Ext.create("FlowMVC.mvc.event.EventDispatcher");
+        evt = Ext.create("FlowMVC.mvc.event.AbstractEvent", "tim");
+        listener = Ext.create("FlowMVC.mvc.event.TestEventListener");
+        broadcaster = Ext.create("FlowMVC.mvc.event.TestEventBroadcaster");
         listener.dispatcher = dispatcher;
         broadcaster.dispatcher = dispatcher;
     });
@@ -66,21 +66,21 @@ describe("FlowMVC.mvc.event.EventDispatcher", function() {
         });
 
         it("dispatchGlobalEvent should have dispatched an event", function() {
-            spyOn(dispatcher, 'fireEvent');
+            spyOn(dispatcher, "fireEvent");
             dispatcher.dispatchGlobalEvent(wrongEventType);
             expect(dispatcher.fireEvent).toHaveBeenCalled();
         });
 
         it("broadcaster should have dispatched an event and listener handler should have been called", function() {
-            spyOn(listener, 'handleresponse').andCallThrough();
+            spyOn(listener, "handleresponse").andCallThrough();
             listener.listenFor(evt);
             broadcaster.broadcastEvent(evt);
             expect(listener.handleresponse).toHaveBeenCalled();
         });
 
-        //add a prop to the event and do a 'expectshit to have come through' test
+        //add a prop to the event and do a "expectshit to have come through" test
         it("broadcaster should have dispatched an event with prop set and listener handler should have been called with prop", function() {
-            spyOn(listener, 'handleresponse').andCallThrough();
+            spyOn(listener, "handleresponse").andCallThrough();
             listener.listenFor(evt);
             broadcaster.broadcastEvent(evt);
             expect(listener.handleresponse).toHaveBeenCalledWith(evt, {});
