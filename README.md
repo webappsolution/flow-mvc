@@ -46,4 +46,5 @@ Full documentation on the features and usage of DeftJS is available in the [Wiki
 
 This effort is still ongoing with some in-progress effort that will provide the following features:
 
-*  Unit Tests with Jasmine - (In Progress)
+*  Unit Tests with Jasmine - (In Progress @ 60%)
+*  Wiki and documentation - (In Progress. there have been changes in the code so needs updates.)
