@@ -33,7 +33,7 @@ describe("FlowMVC.mvc.service.rpc.AsyncToken", function() {
 
     // setup
     beforeEach(function() {
-        token = Ext.create('FlowMVC.mvc.service.rpc.AsyncToken');
+        token = Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
         responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", successFunction, failureFunction, this);
     });
 
@@ -60,13 +60,13 @@ describe("FlowMVC.mvc.service.rpc.AsyncToken", function() {
 
 	    it("should not have a success value because the responder is null", function() {
 		    token.addResponder(null);
-		    token.applySuccess('hello');
+		    token.applySuccess("hello");
 		    expect(successValue).toEqual(null);
 	    });
 
 	    it("should not have a failure value because the responder is null", function() {
 		    token.addResponder(null);
-		    token.applyFailure('hello');
+		    token.applyFailure("hello");
 		    expect(failureValue).toEqual(null);
 	    });
 
@@ -80,14 +80,14 @@ describe("FlowMVC.mvc.service.rpc.AsyncToken", function() {
 
         it("success response should be hello", function() {
             token.addResponder(responder);
-            token.applySuccess('hello');
-            expect(successValue).toEqual('hello');
+            token.applySuccess("hello");
+            expect(successValue).toEqual("hello");
         });
 
         it("failure response should be hello", function() {
             token.addResponder(responder);
-            token.applyFailure('hello');
-            expect(successValue).toEqual('hello');
+            token.applyFailure("hello");
+            expect(successValue).toEqual("hello");
         });
 
     });
