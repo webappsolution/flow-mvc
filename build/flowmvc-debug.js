@@ -1327,7 +1327,7 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         autoAdd = typeof autoAdd !== "undefined" ? autoAdd : true;
 
         // if the record isn't in the store and autoAdd is set to true, then add it
-        if( autoAdd && (this.getById(record.id) == null) ) {
+        if( record && autoAdd && (this.getById(record.id) == null) ) {
             this.add(record);
         }
 
