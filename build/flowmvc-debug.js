@@ -185,9 +185,13 @@ Ext.define("FlowMVC.util.UIDUtil", {
 Ext.define("FlowMVC.mvc.event.EventDispatcher", {
     extend: "Ext.util.Observable",
 
-    inject: [
-        "logger"
-    ],
+	statics: {
+
+		/**
+		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher")
+	},
 
     /**
      * Allows for inter-controller communication by dispatching events on the application-level event bus.
@@ -214,7 +218,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
             type = event;
         }
 
-        this.logger.debug("dispatchGlobalEvent: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("dispatchGlobalEvent: " + type);
         return this.fireEvent(type, args);
     },
 
@@ -234,7 +238,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     addGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("addGlobalEventListener: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("addGlobalEventListener: " + type);
 
         this.addListener(type, handler, scope);
 
@@ -258,7 +262,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     removeGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("removeGlobalEventListener");
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("removeGlobalEventListener");
 
         this.removeListener(type, handler, scope)
     }
@@ -296,23 +300,27 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.AbstractEvent"),
 
         /**
-         * An error string indicating that the constructor type parameter cannot be be null or an empty string.
+         * {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
+         * cannot be be null or an empty string.
          */
         ERROR_TYPE_MUST_BE_VALID_STRING: "The constructor parameter 'type' cannot be null or an empty string."
     },
 
     /**
-     * The event type or string name of the event.
+     * {String} type The event type or string name of the event; this is the token client objects subscribe to
+     * when listening for application-level events.
      */
     type: "",
 
     /**
-     * A generic data property for any event.
+     * {Object} data A generic data property for any event.
      */
     data: null,
 
     /**
      * Constructor.
+     *
+     * sets the event type for the event; type must be a non-empty string.
      *
      * @param {String} type The event type or string name of the event; this is the token client objects subscribe to
      * when listening for application-level events.
@@ -353,6 +361,14 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
         "FlowMVC.util.UIDUtil"
     ],
 
+	statics: {
+
+		/**
+		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.AsyncToken")
+	},
+
     /**
      * {String} id The unique ID of the token.
      */
@@ -370,7 +386,8 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      */
     constructor: function()
     {
-        this.id = this.randomUUID();
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("constructor");
+        this.id = FlowMVC.util.UIDUtil.randomUUID();
     },
 
     /**
@@ -380,6 +397,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * used for asynchronous service callbacks.
      */
     addResponder: function(responder) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("addResponder");
         this.responder = responder;
     },
 
@@ -390,6 +408,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * @param {Object} response The data object returned from the success of the asynchronous action.
      */
     applySuccess: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applySuccess");
 
         var callbackFunction;
         var scope;
@@ -409,6 +428,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * @param {Object} response The data object returned from the failure of the asynchronous action.
      */
     applyFailure: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyFailure");
 
         var callbackFunction;
         var scope;
@@ -418,54 +438,6 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 
         if(callbackFunction) {
             callbackFunction.call(scope, response);
-        }
-    },
-
-    /**
-     * Examines the responder set for the service and attempts to execute the specified callback
-     * function and pass it the response.
-     *
-     * @param {Object} response          The data packet from the service response.
-     * @param responderMethod   The string property name of the responder's 'success' or 'failure' property.
-     *                          Allows for hash lookup of custom defined callback methods.
-     */
-    applyResponderMethod: function(response, responderMethod) {
-        FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: ", responderMethod);
-
-        var callbackFunction = null;
-
-        if(this.getResponder() && this.getResponder().scope)
-        {
-            var scope = this.getResponder().scope;
-
-            if(this.getResponder()[responderMethod]) {
-                FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: using service caller's custom defined " + responderMethod + " callback");
-                callbackFunction = this.getResponder()[responderMethod];
-            } else if(typeof scope[responderMethod] === "function") {
-                FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: using service caller's default " + responderMethod + " callback");
-                callbackFunction = scope[responderMethod];
-            } else {
-//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
-                throw new Error(
-                    "["+ Ext.getDisplayName(arguments.callee) +"] " +
-                        CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-                );
-            }
-
-            FlowMVC.mvc.service.AbstractService.logger.groupEnd();
-
-            // execute the callback
-            callbackFunction.call(scope, response);
-
-            this.setResponder(null);
-
-        } else {
-//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
-            throw new Error(
-                "["+ Ext.getDisplayName(arguments.callee) +"] " +
-                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-            );
-
         }
     }
 
@@ -494,9 +466,45 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
  */
 Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 
+	/**
+	 * {Function} success Reference to a method that handles a successful service.
+	 */
     success:    null,
+
+	/**
+	 * Function} failure Reference to a method that handles a failed service.
+	 */
     failure:    null,
+
+	/**
+	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 */
     scope:      null,
+
+    statics: {
+
+        /**
+         * The logger for the object.
+         */
+        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.Responder"),
+
+        /**
+         * {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
+         * cannot be be null or an not a function.
+         */
+        ERROR_SUCCESS_MUST_BE_VALID_FUNCTION: "The constructor parameter 'success' cannot be null or not a function.",
+        /**
+         * {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
+         * cannot be be null or an not a function.
+         */
+        ERROR_FAILURE_MUST_BE_VALID_FUNCTION: "The constructor parameter 'failure' cannot be null or not a function.",
+        /**
+         * {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
+         * cannot be be null.
+         */
+        ERROR_SCOPE_MUST_BE_VALID_OBJECT: "The constructor parameter 'scope' cannot be null or not an object"
+
+    },
 
     /**
      * The constructor creates a Responder object with a success and failure method reference, as well as
@@ -508,6 +516,23 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
      */
     constructor: function(success, failure, scope)
     {
+        if( (success == null) || (typeof(success) !== "function") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_SUCCESS_MUST_BE_VALID_FUNCTION
+            });
+        }
+        if( (failure == null) || (typeof(failure) !== "function") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_FAILURE_MUST_BE_VALID_FUNCTION
+            });
+        }
+        if( (success == null) || (typeof(scope) !== "object") ) {
+            Ext.Error.raise({
+                msg: FlowMVC.mvc.service.rpc.Responder.ERROR_SCOPE_MUST_BE_VALID_OBJECT
+            });
+        }
+	    FlowMVC.mvc.service.rpc.Responder.logger.debug("constructor");
+
         this.success = success;
         this.failure = failure;
         this.scope = scope;
@@ -516,55 +541,6 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 });
 
 /*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
- * The authentication event contains username and password information to login the user.
- * Contains event types for login and logout.
- *
- * TODO: BMR: 02/20/2013: Need to make this work. Not being used right now.
- * TODO: BMR: 02/22/13: Consider moving this to a WASI package so it's not part of this project.
- */
-Ext.define("FlowMVC.mvc.service.rpc.ResponderError", {
-
-    extend: "Error",
-
-    statics: {
-        NO_RESPONDER_DEFINED:
-                "You must provide a responder object to the service that contains either a custom defined " +
-                "success method that exists on the service's caller or a default 'success()' callback.\n" +
-                "Set the responder on the object by doing:\n" +
-                "var responder = Ext.create('FlowMVC.mvc.service.rpc.Responder', this.logoutSuccess, this.logoutFailure, this);\n" +
-                "service.setResponder(responder);" +
-                "or\n" +
-                "service.setResponder({ success: me.mySuccess, fault: me.myFailure, scope: me});"
-    },
-
-    constructor: function(msg)
-    {
-        msg =
-            "["+ Ext.getDisplayName(arguments.callee) +"] " +
-            msg;
-
-        this.callParent(msg);
-
-
-    }
-});/*
  Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
 
  FlowMVC is free software: you can redistribute it and/or modify
@@ -722,7 +698,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     },
 
     executeServiceCallWithAsyncToken: function(service, method, args, success, failure, scope) {
-        FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithPromises");
+        FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithAsyncToken");
 
         var responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", success, failure, scope);
         var token = method.apply(service, args);
@@ -1004,7 +980,6 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
 
     requires: [
         "FlowMVC.mvc.service.rpc.Responder",
-        "FlowMVC.mvc.service.rpc.ResponderError",
         "FlowMVC.mvc.service.rpc.AsyncToken"
     ],
 
@@ -1067,7 +1042,6 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
                 FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: using service caller's default " + responderMethod + " callback");
                 callbackFunction = scope[responderMethod];
             } else {
-//                throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
                 throw new Error(
                     "["+ Ext.getDisplayName(arguments.callee) +"] " +
                     CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
@@ -1082,7 +1056,6 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
             this.setResponder(null);
 
         } else {
-//            throw new FlowMVC.mvc.service.rpc.ResponderError(FlowMVC.mvc.service.rpc.ResponderError.NO_RESPONDER_DEFINED);
             throw new Error(
                 "["+ Ext.getDisplayName(arguments.callee) +"] " +
                 CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
@@ -1304,9 +1277,17 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore"),
 
         /**
-         * An error string indicating that the constructor type parameter cannot be be null or an empty string.
+         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+         * cannot be anything other than null or an array.
          */
-        ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter nust be an array or null."
+        ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter must be an array or null.",
+
+        /**
+         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+         * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         */
+        ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
+            "be an instance of the expected model for this store."
     },
 
     /**
@@ -1328,16 +1309,26 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
      *
      * @param {Ext.data.Model} record The record to set as selected on this store.
      */
-    setSelectedRecord: function(record) {
+    setSelectedRecord: function(record, autoAdd) {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
 
+        // ExtJS and Touch get to the underlying model differently
+        var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
+
         // the record parameter must either be null an instance of the expected model for this store
-        console.log(this.model);
-        console.log(Ext.ClassManager.get(this.model));
-        if (!(record instanceof Ext.ClassManager.get(this.model)) && (record != null)) {
+        if ( !(record instanceof modelClass) && (record != null) ) {
             Ext.Error.raise({
-                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_DATA_PARAM_NOT_VALID
+                msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID
             });
+        }
+
+        // default autoAdd to true
+        // TODO: create util to default values
+        autoAdd = typeof autoAdd !== "undefined" ? autoAdd : true;
+
+        // if the record isn't in the store and autoAdd is set to true, then add it
+        if( autoAdd && (this.getById(record.id) == null) ) {
+            this.add(record);
         }
 
         this._selectedRecord = record;
@@ -1353,6 +1344,16 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         FlowMVC.mvc.store.AbstractStore.logger.debug("getSelectedRecord");
 
         return this._selectedRecord;
+    },
+
+    /**
+     * Removes all records from the store and makes sure the selected record is null.
+     */
+    removeAll: function() {
+        FlowMVC.mvc.store.AbstractStore.logger.debug("removeAll");
+
+        this._selectedRecord = null;
+        this.callParent(arguments);
     },
 
     /**

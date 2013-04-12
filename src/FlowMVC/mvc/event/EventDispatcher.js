@@ -26,9 +26,13 @@
 Ext.define("FlowMVC.mvc.event.EventDispatcher", {
     extend: "Ext.util.Observable",
 
-    inject: [
-        "logger"
-    ],
+	statics: {
+
+		/**
+		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher")
+	},
 
     /**
      * Allows for inter-controller communication by dispatching events on the application-level event bus.
@@ -55,7 +59,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
             type = event;
         }
 
-        this.logger.debug("dispatchGlobalEvent: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("dispatchGlobalEvent: " + type);
         return this.fireEvent(type, args);
     },
 
@@ -75,7 +79,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     addGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("addGlobalEventListener: " + type);
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("addGlobalEventListener: " + type);
 
         this.addListener(type, handler, scope);
 
@@ -99,7 +103,7 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      * @param {Object} scope This one is important so the handler fires in the correct scope.
      */
     removeGlobalEventListener: function(type, handler, scope) {
-        this.logger.debug("removeGlobalEventListener");
+        FlowMVC.mvc.event.EventDispatcher.logger.debug("removeGlobalEventListener");
 
         this.removeListener(type, handler, scope)
     }

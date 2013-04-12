@@ -25,6 +25,14 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
         "FlowMVC.util.UIDUtil"
     ],
 
+	statics: {
+
+		/**
+		 * The logger for the object.
+		 */
+		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.AsyncToken")
+	},
+
     /**
      * {String} id The unique ID of the token.
      */
@@ -42,6 +50,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      */
     constructor: function()
     {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("constructor");
         this.id = FlowMVC.util.UIDUtil.randomUUID();
     },
 
@@ -52,6 +61,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * used for asynchronous service callbacks.
      */
     addResponder: function(responder) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("addResponder");
         this.responder = responder;
     },
 
@@ -62,6 +72,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * @param {Object} response The data object returned from the success of the asynchronous action.
      */
     applySuccess: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applySuccess");
 
         var callbackFunction;
         var scope;
@@ -81,6 +92,7 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
      * @param {Object} response The data object returned from the failure of the asynchronous action.
      */
     applyFailure: function(response) {
+	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyFailure");
 
         var callbackFunction;
         var scope;
