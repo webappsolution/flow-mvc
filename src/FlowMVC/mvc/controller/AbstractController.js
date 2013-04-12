@@ -61,13 +61,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     config: {
 
         /**
-         * @cfg {FlowMVC.mvc.event.EventDispatcher} eventBus The application-level event bus. This is
-         * injected
-         * @accessor
-         */
-//        eventBus: null,
-
-        /**
          * @cfg {String} sessionToken The session token for the Application. This should be a single string without
          * spaces or periods because it is used as the Application's global namespace.
          * @accessor
