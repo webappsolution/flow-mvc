@@ -42,7 +42,14 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
          * method's parameter cannot be anything other than null or an instance of the expected model for this store.
          */
         ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
-            "be an instance of the expected model for this store."
+            "be an instance of the expected model for this store.",
+
+	    /**
+	     * {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
+	     * method's parameter must be not-null and an instance of the expected model for this store.
+	     */
+	    ERROR_SET_UPDATE_PARAM_NOT_VALID: "The update() method's 'record' parameter must be not null and " +
+		    "be an instance of the expected model for this store."
     },
 
     /**
@@ -52,6 +59,14 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
      * @param {Ext.data.Store} this The store.
      * @param {Ext.data.Model} record The Model instance that is set as the selected record.
      */
+
+	/**
+	 * @event updatedRecord
+	 * Fired when a Model instance has been updated in the Store. You should listen
+	 * for this event if you have to update a representation of the selected record in this store in your UI.
+	 * @param {Ext.data.Store} this The store.
+	 * @param {Ext.data.Model} record The Model instance that was updated.
+	 */
 
     /**
      * @private {Object/Ext.data.Model} _selectedRecord the currently selected record for the store.
@@ -67,11 +82,8 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
     setSelectedRecord: function(record, autoAdd) {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
 
-        // ExtJS and Touch get to the underlying model differently
-        var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
-
         // the record parameter must either be null an instance of the expected model for this store
-        if ( !(record instanceof modelClass) && (record != null) ) {
+        if ( !this.isModel(record) && (record != null) ) {
             Ext.Error.raise({
                 msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID
             });
@@ -82,7 +94,7 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
         autoAdd = typeof autoAdd !== "undefined" ? autoAdd : true;
 
         // if the record isn't in the store and autoAdd is set to true, then add it
-        if( autoAdd && (this.getById(record.id) == null) ) {
+        if( record && autoAdd && (this.getById(record.id) == null) ) {
             this.add(record);
         }
 
@@ -144,11 +156,18 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
     /**
      * Update a model object on the store by replacing it with a new model
      *
-     * @param {Object/Ext.data.Model} model The model to replace existing model in store.
-     * @param {String} property The property to use to find model to be replaced.
+     * @param {Ext.data.Model} model The model to replace existing model in store.
+     * @param {String} property The property to use as the id to find the model to be replaced.
      */
     update: function(model, property) {
         property = property ? property : "id";
+
+	    // the record parameter must be non-null and an instance of the expected model for this store
+	    if ( (model == null) || (this.isModel(model) == false) ) {
+		    Ext.Error.raise({
+			    msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_UPDATE_PARAM_NOT_VALID
+		    });
+	    }
 
         if (Ext.getVersion("extjs")) {
             var index = this.find(property, model.get(property));
@@ -159,6 +178,8 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
             this.insert(index, model);
             this.removeAt(index+1);
             FlowMVC.mvc.store.AbstractStore.logger.debug("update: updating ExtJS model with " + property);
+	        this.fireEvent("updatedRecord", this, model);
+	        return model;
         } else {
             var value = model.data[property];
             var record = this.findRecord(property, value);
@@ -170,8 +191,26 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
                 record.dirty = true;
                 this.sync();
                 FlowMVC.mvc.store.AbstractStore.logger.debug("update: updating Touch model with " + property);
+	            this.fireEvent("updatedRecord", this, record);
+	            return model;
             }
         }
-    }
+
+	    return null;
+    },
+
+	/**
+	 * Determines if the model parameter is the expected model type for this store.
+	 *
+	 * @param {Object/Ext.data.Model} model The object being tested to determine if it's the expected model for
+	 * this store.
+	 * @return {Boolean} A flag indicating if the parameter is the expected model for this store.
+	 */
+	isModel: function(record) {
+
+		// ExtJS and Touch get to the underlying model differently
+		var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
+		return (record instanceof modelClass);
+	}
 
 });

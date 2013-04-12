@@ -56,7 +56,6 @@ Ext.define("FlowMVC.util.UIDUtil", {
 
             // Insert '-'s
             s[8] = s[13] = s[18] = s[23] = '-';
-            console.log(s.join(''));
 
             return s.join('');
         }
