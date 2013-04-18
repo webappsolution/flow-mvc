@@ -15,10 +15,5 @@ describe("FlowMVC.logger.Logger", function() {
 		mockLogger.warn();
 		mockLogger.error();
 		mockLogger.fatal();
-
-//		console.debug("TestLogger2::ran test")
-//		var instance = Ext.create("FlowMVC.logger.Logger");
-//		instance.debug("test in TestLogger");
-//		expect(instance).not.toBeNull();
 	});
 });
