@@ -25,188 +25,256 @@
  */
 
 /*
-Jesse, can you create a logger that wraps the Ext Logger but outputs a format like:
+ Jesse, can you create a logger that wraps the Ext Logger but outputs a format like:
 
-15:52:41:130 DEBUG [FlowMVC.mvc.event.AbstractEvent] - AbstractEvent.Constructor: type = flowMVCEvent 
+ 15:52:41:130 DEBUG [FlowMVC.mvc.event.AbstractEvent] - AbstractEvent.Constructor: type = flowMVCEvent
 
-thinking the following:
-1) easy way to use like log4j with timestamp syntax
-2) easy config that pulls in class it's using as part of the log msg -- can probably just reuse the stuff I have our Logger.getLogge() method now.
-3) ability to add json vars to tokens; eg 
+ thinking the following:
+ 1) easy way to use like log4j with timestamp syntax
+ 2) easy config that pulls in class it's using as part of the log msg -- can probably just reuse the stuff I have our Logger.getLogge() method now.
+ 3) ability to add json vars to tokens; eg
 
-logger.debug("execute: first = {0}, last = {1}", [first, last]);
+ logger.debug("execute: first = {0}, last = {1}", [first, last]);
 
-OR 
+ OR
 
-logger.debug("execute: first = {first}, last = {last}", { "first":first, "last":last });
-*/
+ logger.debug("execute: first = {first}, last = {last}", { "first":first, "last":last });
+ */
+Ext.define("FlowMVC.logger.Logger", {
 
-/*
-msg: The message to log (required).
-level: One of: "error", "warn", "info" or "log" (the default is "log").
-dump: An object to dump to the log as part of the message.
-stack: True to include a stack trace in the log.
-indent: Cause subsequent log statements to be indented one step.
-outdent: Cause this and following statements to be one step less indented.
-*/
+	statics: {
 
-Ext.define("FlowMVC.logger.Logger",
-{
+		LOG:    "LOG",
+		DEBUG:  "DEBUG",
+		INFO:   "INFO",
+		WARN:   "WARN",
+		ERROR:  "ERROR",
+		FATAL:  "FATAL",
 
-  statics:
-  {
-    getLogger: function(name)
-    {
-      var tempLogger;
-      var browserAppender;
-      var patternLayout;
+		/**
+		 * {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 */
+		isEnabled: true,
 
-      if(typeof name != "string")
-      {
-        name = Ext.ClassManager.getName(name);
-      }
+		/**
+		 * Creates a logger that outputs the following format:
+		 *
+		 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
+		 *
+		 * @param {String} context The string name used for the logger. This is often the class name of the object the
+		 * logger is used in.
+		 * @returns {FlowMVC.logger.Logger} A FlowMVC logger.
+		 */
+		getLogger: function(context) {
+			var logger;
 
-      // [jwarden 4.18.2013] TODO: Brian, need help here creating
-      // a unique instance + a formatted target like log4j did.
+			if (typeof context != "string") {
+				context = Ext.getClassName(context);
+			}
 
-      tempLogger = Ext.create("FlowMVC.logger.Logger");
-      //tempLogger.setLevel(log4javascript.Level.ALL);
+			if ( (context == null) || (context == "undefined") || (context == "")) {
+				context = "Unknown Context";
+			}
 
-      //browserAppender = new log4javascript.BrowserConsoleAppender();
-      //patternLayout = new log4javascript.PatternLayout("%d{HH:mm:ss:SSS} %-5p [%c] - %m");
-      //browserAppender.setLayout(patternLayout);
-      //tempLogger.addAppender(browserAppender);
+			return Ext.create("FlowMVC.logger.Logger", context);
+		},
 
-      //        tempLogger.error("WASI =================================");
+		/**
+		 * Returns an object of the logger as a factory so it can be injected into client objects. The factory is used
+		 * so we can use the reference to the instance of the object it's injected into, thus allowing log messages
+		 * to take the following format:
+		 *
+		 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
+		 *
+		 * The use of the singleton property of the returned object ensures that the logger is unique and created
+		 * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
+		 *
+		 * @returns {{fn: Function, singleton: boolean}}
+		 */
+		getInjectableLogger: function() {
 
-      return tempLogger;
-    }
-  },
+			return {
+				// The factory function will be passed a single argument:
+				// The object instance that the new object will be injected into
+				// NOTE: the factory function for DeftJS must be named "fn"
+				fn: function(instance) {
+					return FlowMVC.logger.Logger.getLogger(instance);
+				},
+				singleton: false
+			}
+		}
+	},
 
-  internalLog: function(level, args)
-  {
-    // [jwarden 4.8.2013] TODO: verify multiple args, works in log4javascript
-    // var indent = false;
+	/**
+	 * {String} context String name to be used when logging; typically this is the client object's fully-qualified name.
+	 */
+	context: null,
 
-    // Ext.log({level: level, msg: args, dump: dumpObj});
-    // if(args && args.length > 0)
-    // {
-    //   indent = true;
-    // }
+	/**
+	 * Constructor.
+	 *
+	 * @param {String} context The context is a string indicator used when logging with this logger;
+	 * often times this is the class name of the client object using this logger.
+	 */
+	constructor: function(context) {
+		this.context = context;
+	},
 
-    switch(level)
-    {
-      case "log":
-      case "debug":
-        try{console.debug.apply(console, args);}catch(e){}
-        break;
-      case "info":
-        try{console.info.apply(console, args);}catch(e){}
-        break;
-      case "warn":
-        try{console.warn.apply(console, args);}catch(e){}
-        break;
-      case "error":
-      case "fatal":
-        try{console.error.apply(console, args);}catch(e){}
-        break;
-    }
-    
-  },
+	/**
+	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
+	 *
+	 * @return {String} A timestamp in the form of 16:11:45:956.
+	 */
+	getTimestamp: function() {
 
-  log: function()
-  {
-    this.internalLog("log", arguments);
-  },
+		var date            = new Date();
+		var hours           = date.getHours();
+		var minutes         = date.getMinutes();
+		var seconds         = date.getSeconds();
+		var milliseconds    = date.getMilliseconds();
 
-  debug: function()
-  {
-    this.internalLog("debug", arguments);
-  },
+		if (hours < 10) {
+			hours = "0" + hours;
+		}
 
-  info: function()
-  {
-    this.internalLog("info", arguments);
-  },
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
 
-  warn: function()
-  {
-     this.internalLog("warn", arguments);
-  },
+		if (seconds < 10) {
+			seconds = "0" + seconds;
+		}
 
-  error: function()
-  {
-    this.internalLog("error", arguments);
-  },
+		if (milliseconds < 10) {
+			milliseconds = "00" + milliseconds;
+		} else if (milliseconds < 100) {
+			milliseconds = "0" + milliseconds;
+		}
 
-  fatal: function()
-  {
-    this.internalLog("fatal", arguments);
-  }
+		return hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+	},
+
+	/**
+	 * Creates a print-friendly context in the form of [{context}] for logging purposes.
+	 *
+	 * @return {String} A context in the form of [{context}].
+	 */
+	getContext: function() {
+		return "[" + this.context + "]";
+	},
+
+	/**
+	 * Creates a print-friendly context in the form of
+	 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = {a}, password = {b}
+	 * for logging purposes, where {a} and {b} are tokenized parameters passed into the logging method.
+	 *
+	 * @return {String} A context in the form of 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController]
+	 * - login: username = {a}, password = {b}.
+	 */
+	getPrintFriendlyLogStatement: function(level, msg) {
+		return this.getTimestamp() + " " + level + "\t" + this.getContext() + " - " + msg;
+	},
+
+	/**
+	 * Determines the log level and logs to the console accordingly. Can take tokenized log messages and substitute
+	 * values passed into the logging method.
+	 *
+	 * @param {String} level The logging level.
+	 * @param {Array} args An array of logging arguments. The first argument is typically the message and the following
+	 * can be used in log message token substitution.
+	 */
+	internalLog: function(level, args) {
+
+		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
+		var len = args.length;
+
+		// replace any tokens in the msg
+		if ( (typeof args != "array") && (args.length > 1) ) {
+			for (var i = 0; i < len; i++)
+			{
+				msg = msg.replace(new RegExp("\\{"+i+"\\}", "g"), args[i+1]);
+			}
+		}
+
+		// do not log anything if logging is not enabled
+		if(!FlowMVC.logger.Logger.isEnabled) {
+			return;
+		}
+
+		// determine the log level and log to the console accordingly
+		switch (level) {
+			case FlowMVC.logger.Logger.INFO:
+				try {
+					console.info(msg);
+				} catch (e) {
+				}
+				break;
+			case FlowMVC.logger.Logger.WARN:
+				try {
+					console.warn(msg);
+				} catch (e) {
+				}
+				break;
+			case FlowMVC.logger.Logger.ERROR:
+			case FlowMVC.logger.Logger.FATAL:
+				try {
+					console.error(msg);
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LOG:
+			case FlowMVC.logger.Logger.DEBUG:
+			default:
+				try {
+					console.debug(msg);
+				} catch (e) {
+				}
+				break;
+		}
+
+	},
+
+	/**
+	 * Provides logging with a level of "log".
+	 */
+	log: function() {
+		this.internalLog(FlowMVC.logger.Logger.LOG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "debug".
+	 */
+	debug: function() {
+		this.internalLog(FlowMVC.logger.Logger.DEBUG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "info".
+	 */
+	info: function() {
+		this.internalLog(FlowMVC.logger.Logger.INFO, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "warn".
+	 */
+	warn: function() {
+		this.internalLog(FlowMVC.logger.Logger.WARN, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "error".
+	 */
+	error: function() {
+		this.internalLog(FlowMVC.logger.Logger.ERROR, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "fatal".
+	 */
+	fatal: function() {
+		this.internalLog(FlowMVC.logger.Logger.FATAL, arguments);
+	}
 
 });
-
-
-
-// Ext.define("FlowMVC.logger.Logger", {
-
-//     statics: {
-
-//         /**
-//          * Returns an object of the logger as a factory so it can be injected into client objects. The factory is used
-//          * so we can use the reference to the instance of the object it's injected into, thus allowing log messages
-//          * to take the following format:
-//          *
-//          * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
-//          *
-//          * The use of the singleton property of the returned object ensures that the logger is unique and created
-//          * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
-//          *
-//          * @returns {{fn: Function, singleton: boolean}}
-//          */
-//         getInjectableLogger: function() {
-
-//             return {
-//                 // The factory function will be passed a single argument:
-//                 // The object instance that the new object will be injected into
-//                 // NOTE: the factory function for DeftJS must be named "fn"
-//                 fn: function(instance) {
-//                     return FlowMVC.logger.Logger.getLogger(instance);
-//                 },
-//                 singleton: false
-//             }
-//         },
-
-//         /**
-//          * Creates a log4JavaScript logger that outputs the following format:
-//          *
-//          * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
-//          *
-//          * @param {String} name The string name used for the logger. This is often the class name of the object the
-//          * logger is used in.
-//          * @returns {*} A log4JavaScript logger.
-//          */
-//         getLogger: function(name) {
-//             var tempLogger;
-//             var browserAppender;
-//             var patternLayout;
-
-//             if(typeof name != "string") {
-//                 name = Ext.ClassManager.getName(name);
-//             }
-
-//             tempLogger = log4javascript.getLogger(name);
-//             tempLogger.setLevel(log4javascript.Level.ALL);
-
-//             browserAppender = new log4javascript.BrowserConsoleAppender();
-//             patternLayout = new log4javascript.PatternLayout("%d{HH:mm:ss:SSS} %-5p [%c] - %m");
-//             browserAppender.setLayout(patternLayout);
-//             tempLogger.addAppender(browserAppender);
-
-//             //        tempLogger.error("WASI =================================");
-
-//             return tempLogger;
-//         }
-//     }
-// });
-
