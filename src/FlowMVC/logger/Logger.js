@@ -66,6 +66,9 @@ Ext.define("FlowMVC.logger.Logger",
         name = Ext.ClassManager.getName(name);
       }
 
+      // [jwarden 4.18.2013] TODO: Brian, need help here creating
+      // a unique instance + a formatted target like log4j did.
+
       tempLogger = Ext.create("FlowMVC.logger.Logger");
       //tempLogger.setLevel(log4javascript.Level.ALL);
 
