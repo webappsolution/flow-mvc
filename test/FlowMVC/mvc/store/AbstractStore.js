@@ -241,6 +241,8 @@ describe("FlowMVC.mvc.store.AbstractStore", function() {
 			store.update(mockModel);
 			var model = store.getById(mockModel.get("id"));
 
+			// TODO: this seems to be different in all the frameworks and fails the toHaveBeenCalledWith()
+			// Sencha Touch 2.0.1: Expected undefined to equal 'John', Expected undefined to equal 'Doe', Expected undefined to equal '111-222-3333'.
 			expect(model.get("id")).toEqual(mockModel.get("id"));
 			expect(model.get("firstName")).toEqual(mockModel.get("firstName"));
 			expect(model.get("lastName")).toEqual(mockModel.get("lastName"));

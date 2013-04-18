@@ -210,6 +210,7 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
 
 		// ExtJS and Touch get to the underlying model differently
 		var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
+		var bool = (record instanceof modelClass);
 		return (record instanceof modelClass);
 	}
 
