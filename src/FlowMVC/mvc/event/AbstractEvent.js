@@ -60,7 +60,7 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
                 msg: FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING
             });
         }
-        FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = ", type);
+        FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = {type}", { type:type });
         this.type = type;
     }
 });

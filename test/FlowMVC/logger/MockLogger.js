@@ -27,21 +27,17 @@ Ext.define("FlowMVC.logger.MockLogger", {
 	log: function() {
 		FlowMVC.logger.MockLogger.logger.log("log {0} and name = {1}", ["[BMR 0]", "[BMR 1]"]);
 
-		var source =
-			'<table border="{border}">' +
-				'<tr><th>Last</th><td>{user.last}</td></tr>' +
-				'<tr><th>First</th><td>{user.first}</td></tr>' +
-			'</table>';
+		var logMessage = "User {user.username} successfully logged in with password '{user.password}' and has a session ID = {sessionID}.";
 
-		var fields = {
+		var jsonToken = {
 			user: {
-				first : "Thomas",
-				last : "Burleson"
+				username: "john@doe.com",
+				password: "secret1234"
 			},
-			border: 2
+			sessionID: "C4A56B5B-AC4B-46FB-AE7D-BAF45154A95E"
 		};
 
-		FlowMVC.logger.MockLogger.logger.log(source, fields);
+		FlowMVC.logger.MockLogger.logger.log(logMessage, jsonToken);
 	},
 
 	debug: function() {

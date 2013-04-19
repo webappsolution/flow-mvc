@@ -16,45 +16,61 @@
  */
 
 /**
- * The logger is a wrapper to the Log4JavaScript logger and serves 2 purposes:
+ * The logger provides a simple wrapper to the console but with some added benefits like checking for console
+ * availability and parametrized variable substitution in logging messages using array notation or JSON objects:
  *
- * 1) It's configured with a standard Log4J (java) type configuration.
- * 2) It has a simple accessor method that wraps the logger as a factory so it's easily injected into client objects
- * with a reference to the client instance, allowing the console ouput to contain the client object name without
- * additional configuration.
- */
-
-/*
- Jesse, can you create a logger that wraps the Ext Logger but outputs a format like:
-
- 15:52:41:130 DEBUG [FlowMVC.mvc.event.AbstractEvent] - AbstractEvent.Constructor: type = flowMVCEvent
-
- thinking the following:
- 1) easy way to use like log4j with timestamp syntax
- 2) easy config that pulls in class it's using as part of the log msg -- can probably just reuse the stuff I have our Logger.getLogge() method now.
- 3) ability to add json vars to tokens; eg
-
- logger.debug("execute: first = {0}, last = {1}", [first, last]);
-
- OR
-
- logger.debug("execute: first = {first}, last = {last}", { "first":first, "last":last });
+ * The output for the logger looks like:
+ *
+ * HH:MM:SS:SSS LEVEL [context or className] - message
+ *
+ * Variable substitution with tokens is achieved with:
+ *
+ * logger.debug("execute: first = {0}, last = {1}", [first, last]);
+ *
+ * OR
+ *
+ * logger.debug("execute: name = {name}, last = {foo.bar}", { first:"john doe", foo: { bar:"foo-bar" } });
+ *
+ * The logger does not currently allow you to edit the formatted output or filter by log level or category.
  */
 Ext.define("FlowMVC.logger.Logger", {
 
 	statics: {
 
-		LOG:    "LOG",
-		DEBUG:  "DEBUG",
-		INFO:   "INFO",
-		WARN:   "WARN",
-		ERROR:  "ERROR",
-		FATAL:  "FATAL",
-
 		/**
 		 * {Boolean} isEnabled Global flag indicating if logging is enabled.
 		 */
 		isEnabled: true,
+
+		/**
+		 * {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 */
+		LEVEL_LOG: "LOG",
+
+		/**
+		 * {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 */
+		LEVEL_DEBUG: "DEBUG",
+
+		/**
+		 * {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 */
+		LEVEL_INFO: "INFO",
+
+		/**
+		 * {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 */
+		LEVEL_WARN: "WARN",
+
+		/**
+		 * {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 */
+		LEVEL_ERROR: "ERROR",
+
+		/**
+		 * {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 */
+		LEVEL_FATAL: "FATAL",
 
 		/**
 		 * Creates a logger that outputs the following format:
@@ -72,7 +88,7 @@ Ext.define("FlowMVC.logger.Logger", {
 				context = Ext.getClassName(context);
 			}
 
-			if ( (context == null) || (context == "undefined") || (context == "")) {
+			if ((context == null) || (context == "undefined") || (context == "")) {
 				context = "Unknown Context";
 			}
 
@@ -121,17 +137,59 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
+	 * Provides logging with a level of "log".
+	 */
+	log: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_LOG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "debug".
+	 */
+	debug: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_DEBUG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "info".
+	 */
+	info: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_INFO, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "warn".
+	 */
+	warn: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_WARN, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "error".
+	 */
+	error: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_ERROR, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "fatal".
+	 */
+	fatal: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_FATAL, arguments);
+	},
+
+	/**
 	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
 	 *
 	 * @return {String} A timestamp in the form of 16:11:45:956.
 	 */
 	getTimestamp: function() {
 
-		var date            = new Date();
-		var hours           = date.getHours();
-		var minutes         = date.getMinutes();
-		var seconds         = date.getSeconds();
-		var milliseconds    = date.getMilliseconds();
+		var date = new Date();
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var seconds = date.getSeconds();
+		var milliseconds = date.getMilliseconds();
 
 		if (hours < 10) {
 			hours = "0" + hours;
@@ -176,7 +234,7 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
-	 * Determines the log level and logs to the console accordingly. Can take tokenized log messages and substitute
+	 * @private Determines the log level and logs to the console accordingly. Can take tokenized log messages and substitute
 	 * values passed into the logging method.
 	 *
 	 * @param {String} level The logging level.
@@ -185,96 +243,106 @@ Ext.define("FlowMVC.logger.Logger", {
 	 */
 	internalLog: function(level, args) {
 
-		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
-		var len = args.length;
-
-		// replace any tokens in the msg
-		if ( (typeof args != "array") && (args.length > 1) ) {
-			for (var i = 0; i < len; i++)
-			{
-				msg = msg.replace(new RegExp("\\{"+i+"\\}", "g"), args[i+1]);
-			}
-		}
-
 		// do not log anything if logging is not enabled
-		if(!FlowMVC.logger.Logger.isEnabled) {
+		if (!FlowMVC.logger.Logger.isEnabled) {
 			return;
 		}
 
+		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
+
+		if(args && (args.length >= 2)) {
+
+			var tokenValues = args[1];
+
+			// do substitution of tokens with the passed in array of values
+			if (Ext.isArray(tokenValues)) {
+				var len = tokenValues.length;
+				for (var i = 0; i < len; i++) {
+					msg = msg.replace(new RegExp("\\{" + i + "\\}", "g"), tokenValues[i]);
+				}
+
+			// do substitution of tokens using the passef in JSON object
+			} else if (Ext.isObject(tokenValues)) {
+				var tokens = msg.match(/\{(.*?)\}/g);
+				if(Ext.isArray(tokens)) {
+					var token;
+					var properties;
+					var value;
+					var len = tokens.length;
+
+					for (var j = 0; j < len; j++) {
+
+						// TODO: Stop being lazy and use some regex
+						token = tokens[j].replace("{", "");
+						token = token.replace("}", "");
+						properties = token.split(".");
+
+						getNestedValue = function(tokenValues, properties) {
+
+							var property = "";
+							var len = properties.length;
+							for (var j = 0; j < len; j++) {
+								property = properties[j];
+								tokenValues = tokenValues[property];
+							}
+							return tokenValues;
+						}
+
+						try {
+							value = getNestedValue(tokenValues, properties);
+						} catch(e) {
+							value = "";
+						};
+
+						msg = msg.replace(new RegExp(tokens[j]), value);
+					}
+				}
+			}
+		}
+
 		// determine the log level and log to the console accordingly
+		// TODO: Might want to consider using Ext.Logger() or something that fixes console logging with IE
 		switch (level) {
-			case FlowMVC.logger.Logger.INFO:
+			case FlowMVC.logger.Logger.LEVEL_INFO:
 				try {
-					console.info(msg);
-				} catch (e) {
-				}
-				break;
-			case FlowMVC.logger.Logger.WARN:
-				try {
-					console.warn(msg);
-				} catch (e) {
-				}
-				break;
-			case FlowMVC.logger.Logger.ERROR:
-			case FlowMVC.logger.Logger.FATAL:
-				try {
-					console.error(msg);
+					if(window.console && console.info && Ext.isFunction(console.info)) {
+						console.info(msg);
+					}
 				} catch (e) {
 				}
 				break;
 
-			case FlowMVC.logger.Logger.LOG:
-			case FlowMVC.logger.Logger.DEBUG:
+			case FlowMVC.logger.Logger.LEVEL_WARN:
+				try {
+					if(window.console && console.warn && Ext.isFunction(console.warn)) {
+						console.warn(msg);
+					}
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LEVEL_ERROR:
+			case FlowMVC.logger.Logger.LEVEL_FATAL:
+				try {
+					if(window.console && console.error && Ext.isFunction(console.error)) {
+						console.error(msg);
+					}
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LEVEL_LOG:
+			case FlowMVC.logger.Logger.LEVEL_DEBUG:
 			default:
 				try {
-					console.debug(msg);
+					if(window.console && console.debug && Ext.isFunction(console.debug)) {
+						console.debug(msg);
+					}
 				} catch (e) {
 				}
 				break;
 		}
 
-	},
-
-	/**
-	 * Provides logging with a level of "log".
-	 */
-	log: function() {
-		this.internalLog(FlowMVC.logger.Logger.LOG, arguments);
-	},
-
-	/**
-	 * Provides logging with a level of "debug".
-	 */
-	debug: function() {
-		this.internalLog(FlowMVC.logger.Logger.DEBUG, arguments);
-	},
-
-	/**
-	 * Provides logging with a level of "info".
-	 */
-	info: function() {
-		this.internalLog(FlowMVC.logger.Logger.INFO, arguments);
-	},
-
-	/**
-	 * Provides logging with a level of "warn".
-	 */
-	warn: function() {
-		this.internalLog(FlowMVC.logger.Logger.WARN, arguments);
-	},
-
-	/**
-	 * Provides logging with a level of "error".
-	 */
-	error: function() {
-		this.internalLog(FlowMVC.logger.Logger.ERROR, arguments);
-	},
-
-	/**
-	 * Provides logging with a level of "fatal".
-	 */
-	fatal: function() {
-		this.internalLog(FlowMVC.logger.Logger.FATAL, arguments);
 	}
 
 });
