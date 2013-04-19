@@ -16,18 +16,27 @@
  */
 
 /**
- * The logger provides a simple wrapper to the console but with some added benefits like checking for console
- * availability and parametrized variable substitution in logging messages using array notation or JSON objects:
+ * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
+ * of bells and whistles; simply put, this logger offers console logging as the only target, no filtering by context
+ * or leg-level, and a fixed output that's not configurable. There are many other logging libraries that support this
+ * type of advanced logging support: log4javascript http://log4javascript.org/, log4js-ext https://code.google.com/p/log4js-ext/
+ * and so on.
  *
- * The output for the logger looks like:
+ * The logger provides a simple wrapper to the console but with some added benefits like checking for console
+ * availability and parametrized variable substitution in logging messages using array or JSON notation as
+ * the second parameter to the log statement. The output for the logger looks like:
  *
  * HH:MM:SS:SSS LEVEL [context or className] - message
  *
- * Variable substitution with tokens is achieved with:
+ * A fully backed example log message might look like:
+ *
+ * 22:07:44:968 DEBUG	[FlowMVC.mvc.event.AbstractEvent] - AbstractEvent.Constructor: type = flowMVCEvent
+ *
+ * Variable substitution with tokens is achieved with arrays:
  *
  * logger.debug("execute: first = {0}, last = {1}", [first, last]);
  *
- * OR
+ * OR with JSON:
  *
  * logger.debug("execute: name = {name}, last = {foo.bar}", { first:"john doe", foo: { bar:"foo-bar" } });
  *
@@ -84,7 +93,7 @@ Ext.define("FlowMVC.logger.Logger", {
 		getLogger: function(context) {
 			var logger;
 
-			if (typeof context != "string") {
+			if(!Ext.isString(context)) {
 				context = Ext.getClassName(context);
 			}
 
@@ -213,15 +222,6 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
-	 * Creates a print-friendly context in the form of [{context}] for logging purposes.
-	 *
-	 * @return {String} A context in the form of [{context}].
-	 */
-	getContext: function() {
-		return "[" + this.context + "]";
-	},
-
-	/**
 	 * Creates a print-friendly context in the form of
 	 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = {a}, password = {b}
 	 * for logging purposes, where {a} and {b} are tokenized parameters passed into the logging method.
@@ -230,7 +230,68 @@ Ext.define("FlowMVC.logger.Logger", {
 	 * - login: username = {a}, password = {b}.
 	 */
 	getPrintFriendlyLogStatement: function(level, msg) {
-		return this.getTimestamp() + " " + level + "\t" + this.getContext() + " - " + msg;
+		return this.getTimestamp() + " " + level + "\t" + "[" + this.context + "]" + " - " + msg;
+	},
+
+	/**
+	 * Determines if the token value object (second parameter in the original log function) is an array or object
+	 * and attempts to perform token substitution based on the valuers in the array or JSON object. Tokens in the
+	 * message either looks like {0}, {1}, ... {n} for array substitution or {user.username}, {firstName} for
+	 * JSON substitution.
+	 *
+	 * @return {String} The final message with tokens replaced with values.
+	 */
+	replaceTokens: function(args, msg) {
+		var tokenValues = args[1];
+
+		// do substitution of tokens with the passed in array of values
+		if (Ext.isArray(tokenValues)) {
+			var len = tokenValues.length;
+			for (var i = 0; i < len; i++) {
+				msg = msg.replace(new RegExp("\\{" + i + "\\}", "g"), tokenValues[i]);
+			}
+
+		// do substitution of tokens using the passed in JSON object
+		} else if (Ext.isObject(tokenValues)) {
+			var tokens = msg.match(/\{(.*?)\}/g);
+			if(Ext.isArray(tokens)) {
+
+				var value = "";
+				var len = tokens.length;
+
+				// loop through all the tokens and repalace them with values from the JSON object
+				for (var j = 0; j < len; j++) {
+
+					// replace the brackets for "{user.username}" becomes "user.username"
+					var token = tokens[j].replace(/\{(.*?)\}/g,"$1");
+					// create an array of all the tokens
+					var properties = token.split(".");
+
+					// nested function to dig down into a JSON object and grab the actual value of the nested property
+					// allows for the retrieval of a json object like foo.bar.count.
+					getNestedValue = function(tokenValues, properties) {
+
+						var property = "";
+						var len = properties.length;
+						for (var j = 0; j < len; j++) {
+							property = properties[j];
+							tokenValues = tokenValues[property];
+						}
+						return tokenValues;
+					}
+
+					try {
+						value = getNestedValue(tokenValues, properties);
+					} catch(e) {
+						value = "";
+					};
+
+					msg = msg.replace(new RegExp(tokens[j]), value);
+				}
+			}
+		}
+
+		return msg;
 	},
 
 	/**
@@ -248,60 +309,16 @@ Ext.define("FlowMVC.logger.Logger", {
 			return;
 		}
 
+		// get the console print friendly message
 		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
 
+		// determine if the message has parametrized tokens
 		if(args && (args.length >= 2)) {
-
-			var tokenValues = args[1];
-
-			// do substitution of tokens with the passed in array of values
-			if (Ext.isArray(tokenValues)) {
-				var len = tokenValues.length;
-				for (var i = 0; i < len; i++) {
-					msg = msg.replace(new RegExp("\\{" + i + "\\}", "g"), tokenValues[i]);
-				}
-
-			// do substitution of tokens using the passef in JSON object
-			} else if (Ext.isObject(tokenValues)) {
-				var tokens = msg.match(/\{(.*?)\}/g);
-				if(Ext.isArray(tokens)) {
-					var token;
-					var properties;
-					var value;
-					var len = tokens.length;
-
-					for (var j = 0; j < len; j++) {
-
-						// TODO: Stop being lazy and use some regex
-						token = tokens[j].replace("{", "");
-						token = token.replace("}", "");
-						properties = token.split(".");
-
-						getNestedValue = function(tokenValues, properties) {
-
-							var property = "";
-							var len = properties.length;
-							for (var j = 0; j < len; j++) {
-								property = properties[j];
-								tokenValues = tokenValues[property];
-							}
-							return tokenValues;
-						}
-
-						try {
-							value = getNestedValue(tokenValues, properties);
-						} catch(e) {
-							value = "";
-						};
-
-						msg = msg.replace(new RegExp(tokens[j]), value);
-					}
-				}
-			}
+			msg = this.replaceTokens(args, msg);
 		}
 
 		// determine the log level and log to the console accordingly
-		// TODO: Might want to consider using Ext.Logger() or something that fixes console logging with IE
+		// TODO: Might want to consider using Ext.Logger() or something that handles console logging with IE
 		switch (level) {
 			case FlowMVC.logger.Logger.LEVEL_INFO:
 				try {
