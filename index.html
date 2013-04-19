@@ -1,1 +1,204 @@
-My Github Page
+<index>
+	<head>
+		<title>Flow MVC</title>
+		<style>
+			html
+			{
+				height: 100%px;
+				overflow:auto;
+			}
+			body
+			{
+				height: 100%px;
+				background-image:url('background.jpg');
+				background-color:#000000;
+				padding: 0px;
+				margin: 0px;
+
+				font-family: "Helvetica Neue";
+			}
+			#logo
+			{
+				margin-left: auto;
+    			margin-right: auto;
+    			width: 1000px;
+			}
+
+			#divider
+			{
+				background-color: #b3b7bc;
+				margin-left: auto;
+    			margin-right: auto;
+    			width: 1000px;
+    			height: 36px;
+			}
+
+			#info
+			{
+				background-color: #FFFFFF;
+				margin-left: auto;
+    			margin-right: auto;
+    			width: 1000px;
+			}
+
+			#contentInner
+			{
+				padding-top: 8px;
+				padding-left: 64px;
+				padding-right: 64px;
+				padding-bottom: 0px;
+				margin: 0px;
+
+			}
+
+			#footer
+			{
+				padding: 0px;
+				margin-left: auto;
+    			margin-right: auto;
+			}
+
+			p
+			{
+				font-size: 32px;
+				font-weight: bold;
+			}
+
+			#tagLine
+			{
+				font-size: 26px;
+				font-weight: normal;
+			}
+
+			#download
+			{
+				margin-left: auto;
+    			margin-right: auto;
+    			background-color: #933027;
+    			padding-left: 16px;
+    			padding-right: 16px;
+    			padding-top: 0px;
+    			padding-bottom: 0px;
+    			width: 380px;
+			}
+
+			.downloadText
+			{
+				margin-left: auto;
+    			margin-right: auto;
+    			color: #FFFFFF;
+    			text-align: center;
+    			font-size: 40px;
+    			padding-top: 16px;
+    			padding-bottom: 16px;
+			}
+
+			.downloadText a
+			{
+				text-decoration: none;
+			}
+
+			a
+			{
+				color: #333333;
+			}
+
+			a:link {color:#333333;}      /* unvisited link */
+			a:visited {color:#000000;}  /* visited link */
+			a:hover {color:#FFFFFF; background-color: #933027;}  /* mouse over link */
+			a:active {color:#FFFFFF; background-color: #933027;}  /* selected link */
+
+			h1
+			{
+				font-size: 36px;
+				font-weight: bold;
+				color: #933027;
+			}
+
+			.documentationCopy
+			{
+				font-size: 20px;
+				font-weight: normal;
+			}
+
+			li
+			{
+				font-size: 20px;
+				font-weight: normal;
+			}
+
+		</style>
+	</head>
+<body>
+	<div id="content">
+		<div id="logo">
+			<img src="flow-mvc-logo.jpg"></img>
+		</div>
+		<div id="divider"></div>
+		<section id="info">
+			<div id="contentInner">
+				<p>An MVC famework for Flex Developers using Sencha ExtJS and Touch.</p>
+				
+				<a href="https://github.com/WebAppSolutionInc/flow-mvc/archive/master.zip"><div id="download">
+					<p class="downloadText">Download Now</p>
+				</div></a>
+
+				<p id="tagline">Take what you already know and go with it...just <span style="color: #933027;">code with the Flow.</span></p>
+
+				<h1><a href="http://www.webappsolution.com">WASI's</a> FlowMVC</h1>
+
+				<p class="documentationCopy">FlowMVC builds on the work of <a href="https://github.com/deftjs/">DeftJS</a>, <a href="http://www.sencha.com/products/extjs">Sencha ExtJS</a>, and <a href="http://www.sencha.com/products/touch">Sencha Touch</a> APIs with extensions that enable Flex and ActionScript developers to take their expertise and apply them to the HTML5/JavaScript world. It's a framework that users of Flex MVC-based architectures, such as Swiz or Parley, will be familiar with.</p>
+
+				<p class="documentationCopy">In addition, for enterprises looking to leverage intellectual capital across platforms with Sencha Touch and ExtJS, it provides an application structure with reusability and portability in mind encouraging the re-use of application and business logic.</p>
+
+				<p class="documentationCopy">For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the <a href="https://github.com/WebAppSolutionInc/sencha-cafe-townsend">Cafe Townsend Demo Project</a>, provide a level of security for enterprise architects and managers that their goals, such as well defined project structure, documentation, testability, localization, and re-use of resources, both human and IC, are met.</p>
+
+				<p class="documentationCopy"><b>FlowMVC works with ExtJS version 4.1 and up, Sencha Touch version 2.0 and up, and DeftJS version 0.8.0 and up.</b></p>
+
+				<h1>Goals</h1>
+
+				<ul>
+					<li><b>Familiarity:</b> Provides constructs and patterns familiar to users of Flex MVC-based architectures.</li>
+					<li><b>Consistent Project Structure</b>: Builds on the prescriptive nature of Sencha MVC with the suggestive design of DeftJS.</li>
+					<li><b>Testability</b>: Promotes the use of Passive Views and Mediators; "with the view reduced to a dumb slave of the controller, 
+				you run little risk by not testing the view." [Fowler](http://martinfowler.com/eaaDev/PassiveScreen.html).</li>
+					<li><b>Reusability</b>: Provides further facilitation to the re-use of business layers between Sencha Touch and Sencha ExtJS code bases.</li>
+				</ul>
+
+				<h1>Documentation Overview</h1>
+
+				<p class="documentationCopy">Full documentation on the features and usage of DeftJS is available in the <a href="v">Wiki</a>.</p>
+
+				<ul>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure">Consistant Project Structure</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS">Flex like Model-View-Controller-Service</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection">Flex like Dependency injection</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus">Flex like Event Bus</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Data-Services-And-Mocks">Flex like HTTP Data Services and Mocks</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators">Flex like implementation of Passive View using Mediators</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests">FlexUnit like tests using Jasmine for both functional and asynchronous code blocks</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code">Reuse of code between ExtJS and Touch versions</a></li>
+					<li><a href="https://github.com/senchalabs/jsduck">AsDoc like JSDuck Documentation</a></li>
+					<li><a href="http://www.webappsolution.com">.FlowMVC API Docs</a></li>
+					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources">Resources</a></li>
+				</ul>
+
+				<h1>Examples</h1>
+
+				<p class="documentationCopy"><a href="https://github.com/WebAppSolutionInc/sencha-cafe-townsend">Cafe Townsend Demo Project</a></p>
+
+				<h1>Pending Features</h1>
+
+				<p class="documentationCopy">This effort is still ongoing with some in-progress effort that will provide the following features:</p>
+
+				<ul>
+					<li>Unit Tests with Jasmine - (In Progress @ 60%)</li>
+					<li>Wiki and documentation - (In Progress. there have been changes in the code so needs updates.)</li>
+				</ul>
+
+				<p>&nbsp;</p>
+
+			</div>
+		</section>
+	</div>
+</body>
