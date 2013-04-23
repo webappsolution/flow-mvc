@@ -5,7 +5,7 @@ ActionScript developers to take their expertise and apply them to the HTML5/Java
 users of Flex MVC-based architectures, such as Swiz, Parley or RobotLegs, will be familiar with.
 
 In addition, for enterprises looking to leverage intellectual capital across platforms with Sencha Touch and ExtJS, it
-provides an application structure with reusability and portability in mind encouraging the re-use of application and
+provides an application structure with reusability and portability in mind encouraging the re-use of core application and
 business logic.
 
 For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend),
