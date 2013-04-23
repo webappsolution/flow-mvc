@@ -125,10 +125,10 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
                 FlowMVC.mvc.service.AbstractService.logger.debug(&quot;applyResponderMethod: using service caller's default &quot; + responderMethod + &quot; callback&quot;);
                 callbackFunction = scope[responderMethod];
             } else {
-                throw new Error(
-                    &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
-                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-                );
+	            Ext.Error.raise({
+		            msg: &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+			            CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+	            });
             }
 
             FlowMVC.mvc.service.AbstractService.logger.groupEnd();
@@ -139,10 +139,10 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
             this.setResponder(null);
 
         } else {
-            throw new Error(
-                &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
-                CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-            );
+	        Ext.Error.raise({
+		        msg: &quot;[&quot;+ Ext.getDisplayName(arguments.callee) +&quot;] &quot; +
+			        CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+	        });
 
         }
     },

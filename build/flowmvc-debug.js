@@ -23,75 +23,353 @@ Open source under the [GNU General Public License](http://www.gnu.org/licenses).
  */
 
 /**
- * The logger is a wrapper to the Log4JavaScript logger and serves 2 purposes:
+ * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
+ * of bells and whistles; simply put, this logger offers console logging as the only target, no filtering by context
+ * or leg-level, and a fixed output that's not configurable. There are many other logging libraries that support this
+ * type of advanced logging support: log4javascript http://log4javascript.org/, log4js-ext https://code.google.com/p/log4js-ext/
+ * and so on.
  *
- * 1) It's configured with a standard Log4J (java) type configuration.
- * 2) It has a simple accessor method that wraps the logger as a factory so it's easily injected into client objects
- * with a reference to the client instance, allowing the console ouput to contain the client object name without
- * additional configuration.
+ * The logger provides a simple wrapper to the console but with some added benefits like checking for console
+ * availability and parametrized variable substitution in logging messages using array or JSON notation as
+ * the second parameter to the log statement. The output for the logger looks like:
+ *
+ * HH:MM:SS:SSS LEVEL [context or className] - message
+ *
+ * A fully backed example log message might look like:
+ *
+ * 22:07:44:968 DEBUG	[FlowMVC.mvc.event.AbstractEvent] - AbstractEvent.Constructor: type = flowMVCEvent
+ *
+ * Variable substitution with tokens is achieved with arrays:
+ *
+ * logger.debug("execute: first = {0}, last = {1}", [first, last]);
+ *
+ * OR with JSON:
+ *
+ * logger.debug("execute: name = {name}, last = {foo.bar}", { first:"john doe", foo: { bar:"foo-bar" } });
+ *
+ * The logger does not currently allow you to edit the formatted output or filter by log level or category.
  */
 Ext.define("FlowMVC.logger.Logger", {
 
-    statics: {
+	statics: {
 
-        /**
-         * Returns an object of the logger as a factory so it can be injected into client objects. The factory is used
-         * so we can use the reference to the instance of the object it's injected into, thus allowing log messages
-         * to take the following format:
-         *
-         * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
-         *
-         * The use of the singleton property of the returned object ensures that the logger is unique and created
-         * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
-         *
-         * @returns {{fn: Function, singleton: boolean}}
-         */
-        getInjectableLogger: function() {
+		/**
+		 * {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 */
+		isEnabled: true,
 
-            return {
-                // The factory function will be passed a single argument:
-                // The object instance that the new object will be injected into
-                // NOTE: the factory function for DeftJS must be named "fn"
-                fn: function(instance) {
-                    return FlowMVC.logger.Logger.getLogger(instance);
-                },
-                singleton: false
-            }
-        },
+		/**
+		 * {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 */
+		LEVEL_LOG: "LOG",
 
-        /**
-         * Creates a log4JavaScript logger that outputs the following format:
-         *
-         * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
-         *
-         * @param {String} name The string name used for the logger. This is often the class name of the object the
-         * logger is used in.
-         * @returns {*} A log4JavaScript logger.
-         */
-        getLogger: function(name) {
-            var tempLogger;
-            var browserAppender;
-            var patternLayout;
+		/**
+		 * {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 */
+		LEVEL_DEBUG: "DEBUG",
 
-            if(typeof name != "string") {
-                name = Ext.ClassManager.getName(name);
-            }
+		/**
+		 * {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 */
+		LEVEL_INFO: "INFO",
 
-            tempLogger = log4javascript.getLogger(name);
-            tempLogger.setLevel(log4javascript.Level.ALL);
+		/**
+		 * {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 */
+		LEVEL_WARN: "WARN",
 
-            browserAppender = new log4javascript.BrowserConsoleAppender();
-            patternLayout = new log4javascript.PatternLayout("%d{HH:mm:ss:SSS} %-5p [%c] - %m");
-            browserAppender.setLayout(patternLayout);
-            tempLogger.addAppender(browserAppender);
+		/**
+		 * {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 */
+		LEVEL_ERROR: "ERROR",
 
-            //        tempLogger.error("WASI =================================");
+		/**
+		 * {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 */
+		LEVEL_FATAL: "FATAL",
 
-            return tempLogger;
-        }
-    }
+		/**
+		 * Creates a logger that outputs the following format:
+		 *
+		 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
+		 *
+		 * @param {String} context The string name used for the logger. This is often the class name of the object the
+		 * logger is used in.
+		 * @returns {FlowMVC.logger.Logger} A FlowMVC logger.
+		 */
+		getLogger: function(context) {
+			var logger;
+
+			if(!Ext.isString(context)) {
+				context = Ext.getClassName(context);
+			}
+
+			if ((context == null) || (context == "undefined") || (context == "")) {
+				context = "Unknown Context";
+			}
+
+			return Ext.create("FlowMVC.logger.Logger", context);
+		},
+
+		/**
+		 * Returns an object of the logger as a factory so it can be injected into client objects. The factory is used
+		 * so we can use the reference to the instance of the object it's injected into, thus allowing log messages
+		 * to take the following format:
+		 *
+		 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = a, password = a
+		 *
+		 * The use of the singleton property of the returned object ensures that the logger is unique and created
+		 * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
+		 *
+		 * @returns {{fn: Function, singleton: boolean}}
+		 */
+		getInjectableLogger: function() {
+
+			return {
+				// The factory function will be passed a single argument:
+				// The object instance that the new object will be injected into
+				// NOTE: the factory function for DeftJS must be named "fn"
+				fn: function(instance) {
+					return FlowMVC.logger.Logger.getLogger(instance);
+				},
+				singleton: false
+			}
+		}
+	},
+
+	/**
+	 * {String} context String name to be used when logging; typically this is the client object's fully-qualified name.
+	 */
+	context: null,
+
+	/**
+	 * Constructor.
+	 *
+	 * @param {String} context The context is a string indicator used when logging with this logger;
+	 * often times this is the class name of the client object using this logger.
+	 */
+	constructor: function(context) {
+		this.context = context;
+	},
+
+	/**
+	 * Provides logging with a level of "log".
+	 */
+	log: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_LOG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "debug".
+	 */
+	debug: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_DEBUG, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "info".
+	 */
+	info: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_INFO, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "warn".
+	 */
+	warn: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_WARN, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "error".
+	 */
+	error: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_ERROR, arguments);
+	},
+
+	/**
+	 * Provides logging with a level of "fatal".
+	 */
+	fatal: function() {
+		this.internalLog(FlowMVC.logger.Logger.LEVEL_FATAL, arguments);
+	},
+
+	/**
+	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
+	 *
+	 * @return {String} A timestamp in the form of 16:11:45:956.
+	 */
+	getTimestamp: function() {
+
+		var date = new Date();
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var seconds = date.getSeconds();
+		var milliseconds = date.getMilliseconds();
+
+		if (hours < 10) {
+			hours = "0" + hours;
+		}
+
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+
+		if (seconds < 10) {
+			seconds = "0" + seconds;
+		}
+
+		if (milliseconds < 10) {
+			milliseconds = "00" + milliseconds;
+		} else if (milliseconds < 100) {
+			milliseconds = "0" + milliseconds;
+		}
+
+		return hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+	},
+
+	/**
+	 * Creates a print-friendly context in the form of
+	 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = {a}, password = {b}
+	 * for logging purposes, where {a} and {b} are tokenized parameters passed into the logging method.
+	 *
+	 * @return {String} A context in the form of 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController]
+	 * - login: username = {a}, password = {b}.
+	 */
+	getPrintFriendlyLogStatement: function(level, msg) {
+		return this.getTimestamp() + " " + level + "\t" + "[" + this.context + "]" + " - " + msg;
+	},
+
+	/**
+	 * Determines if the token value object (second parameter in the original log function) is an array or object
+	 * and attempts to perform token substitution based on the valuers in the array or JSON object. Tokens in the
+	 * message either looks like {0}, {1}, ... {n} for array substitution or {user.username}, {firstName} for
+	 * JSON substitution.
+	 *
+	 * @return {String} The final message with tokens replaced with values.
+	 */
+	replaceTokens: function(args, msg) {
+		var tokenValues = args[1];
+
+		// do substitution of tokens with the passed in array of values
+		if (Ext.isArray(tokenValues)) {
+			var len = tokenValues.length;
+			for (var i = 0; i < len; i++) {
+				msg = msg.replace(new RegExp("\\{" + i + "\\}", "g"), tokenValues[i]);
+			}
+
+		// do substitution of tokens using the passed in JSON object
+		} else if (Ext.isObject(tokenValues)) {
+			var tokens = msg.match(/\{(.*?)\}/g);
+			if(Ext.isArray(tokens)) {
+
+				var value = "";
+				var len = tokens.length;
+
+				// loop through all the tokens and repalace them with values from the JSON object
+				for (var j = 0; j < len; j++) {
+
+					// replace the brackets for "{user.username}" becomes "user.username"
+					var token = tokens[j].replace(/\{(.*?)\}/g,"$1");
+					// create an array of all the tokens
+					var properties = token.split(".");
+
+					// nested function to dig down into a JSON object and grab the actual value of the nested property
+					// allows for the retrieval of a json object like foo.bar.count.
+					getNestedValue = function(tokenValues, properties) {
+
+						var property = "";
+						var len = properties.length;
+						for (var j = 0; j < len; j++) {
+							property = properties[j];
+							tokenValues = tokenValues[property];
+						}
+						return tokenValues;
+					}
+
+					try {
+						value = getNestedValue(tokenValues, properties);
+					} catch(e) {
+						value = "";
+					};
+
+					msg = msg.replace(new RegExp(tokens[j]), value);
+				}
+			}
+		}
+
+		return msg;
+	},
+
+	/**
+	 * @private Determines the log level and logs to the console accordingly. Can take tokenized log messages and substitute
+	 * values passed into the logging method.
+	 *
+	 * @param {String} level The logging level.
+	 * @param {Array} args An array of logging arguments. The first argument is typically the message and the following
+	 * can be used in log message token substitution.
+	 */
+	internalLog: function(level, args) {
+
+		// do not log anything if logging is not enabled
+		if (!FlowMVC.logger.Logger.isEnabled) {
+			return;
+		}
+
+		// get the console print friendly message
+		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
+
+		// determine if the message has parametrized tokens
+		if(args && (args.length >= 2)) {
+			msg = this.replaceTokens(args, msg);
+		}
+
+		// determine the log level and log to the console accordingly
+		// TODO: Might want to consider using Ext.Logger() or something that handles console logging with IE
+		switch (level) {
+			case FlowMVC.logger.Logger.LEVEL_INFO:
+				try {
+					if(window.console && console.info && Ext.isFunction(console.info)) {
+						console.info(msg);
+					}
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LEVEL_WARN:
+				try {
+					if(window.console && console.warn && Ext.isFunction(console.warn)) {
+						console.warn(msg);
+					}
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LEVEL_ERROR:
+			case FlowMVC.logger.Logger.LEVEL_FATAL:
+				try {
+					if(window.console && console.error && Ext.isFunction(console.error)) {
+						console.error(msg);
+					}
+				} catch (e) {
+				}
+				break;
+
+			case FlowMVC.logger.Logger.LEVEL_LOG:
+			case FlowMVC.logger.Logger.LEVEL_DEBUG:
+			default:
+				try {
+					if(window.console && console.debug && Ext.isFunction(console.debug)) {
+						console.debug(msg);
+					}
+				} catch (e) {
+				}
+				break;
+		}
+
+	}
+
 });
-
 /*
  Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
 
@@ -150,7 +428,6 @@ Ext.define("FlowMVC.util.UIDUtil", {
 
             // Insert '-'s
             s[8] = s[13] = s[18] = s[23] = '-';
-            console.log(s.join(''));
 
             return s.join('');
         }
@@ -331,7 +608,7 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
                 msg: FlowMVC.mvc.event.AbstractEvent.ERROR_TYPE_MUST_BE_VALID_STRING
             });
         }
-        FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = ", type);
+        FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = {type}", { type:type });
         this.type = type;
     }
 });/*
@@ -410,15 +687,9 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     applySuccess: function(response) {
 	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applySuccess");
 
-        var callbackFunction;
-        var scope;
-
-        callbackFunction = this.responder.success;
-        scope = this.responder.scope;
-
-        if(callbackFunction) {
-            callbackFunction.call(scope, response);
-        }
+	    if(this.responder) {
+		    this.applyCallback(this.responder.success, this.responder.scope, response);
+	    }
     },
 
     /**
@@ -430,16 +701,27 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
     applyFailure: function(response) {
 	    FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyFailure");
 
-        var callbackFunction;
-        var scope;
+	    if(this.responder) {
+		    this.applyCallback(this.responder.failure, this.responder.scope, response);
+	    }
 
-        callbackFunction = this.responder.failure;
-        scope = this.responder.scope;
+    },
 
-        if(callbackFunction) {
-            callbackFunction.call(scope, response);
-        }
-    }
+	/**
+	 * Applies the callback of the asynchronous action on the responder's defined callback method passing
+	 * it the response parameter from the action.
+	 *
+	 * @param callback {Function} The callback function to execute.
+	 * @param scope {Object} The scope to execute the callback within.
+	 * @param response {Object} The scope to execute the callback within.
+	 */
+	applyCallback: function(callback, scope, response) {
+		FlowMVC.mvc.service.rpc.AsyncToken.logger.debug("applyCallback");
+
+		if(callback && scope) {
+			callback.call(scope, response);
+		}
+	}
 
 });
 
@@ -466,21 +748,6 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
  */
 Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 
-	/**
-	 * {Function} success Reference to a method that handles a successful service.
-	 */
-    success:    null,
-
-	/**
-	 * Function} failure Reference to a method that handles a failed service.
-	 */
-    failure:    null,
-
-	/**
-	 * {Object} scope Reference to the object that has the success and failure handler methods.
-	 */
-    scope:      null,
-
     statics: {
 
         /**
@@ -503,8 +770,22 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
          * cannot be be null.
          */
         ERROR_SCOPE_MUST_BE_VALID_OBJECT: "The constructor parameter 'scope' cannot be null or not an object"
-
     },
+
+	/**
+	 * {Function} success Reference to a method that handles a successful service.
+	 */
+	success:    null,
+
+	/**
+	 * Function} failure Reference to a method that handles a failed service.
+	 */
+	failure:    null,
+
+	/**
+	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 */
+	scope:      null,
 
     /**
      * The constructor creates a Responder object with a success and failure method reference, as well as
@@ -601,13 +882,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     ],
 
     config: {
-
-        /**
-         * @cfg {FlowMVC.mvc.event.EventDispatcher} eventBus The application-level event bus. This is
-         * injected
-         * @accessor
-         */
-//        eventBus: null,
 
         /**
          * @cfg {String} sessionToken The session token for the Application. This should be a single string without
@@ -1042,10 +1316,10 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
                 FlowMVC.mvc.service.AbstractService.logger.debug("applyResponderMethod: using service caller's default " + responderMethod + " callback");
                 callbackFunction = scope[responderMethod];
             } else {
-                throw new Error(
-                    "["+ Ext.getDisplayName(arguments.callee) +"] " +
-                    CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-                );
+	            Ext.Error.raise({
+		            msg: "["+ Ext.getDisplayName(arguments.callee) +"] " +
+			            CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+	            });
             }
 
             FlowMVC.mvc.service.AbstractService.logger.groupEnd();
@@ -1056,10 +1330,10 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
             this.setResponder(null);
 
         } else {
-            throw new Error(
-                "["+ Ext.getDisplayName(arguments.callee) +"] " +
-                CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
-            );
+	        Ext.Error.raise({
+		        msg: "["+ Ext.getDisplayName(arguments.callee) +"] " +
+			        CafeTownsend.service.AbstractService.NO_RESPONDER_DEFINED
+	        });
 
         }
     },
@@ -1287,7 +1561,14 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
          * method's parameter cannot be anything other than null or an instance of the expected model for this store.
          */
         ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
-            "be an instance of the expected model for this store."
+            "be an instance of the expected model for this store.",
+
+	    /**
+	     * {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
+	     * method's parameter must be not-null and an instance of the expected model for this store.
+	     */
+	    ERROR_SET_UPDATE_PARAM_NOT_VALID: "The update() method's 'record' parameter must be not null and " +
+		    "be an instance of the expected model for this store."
     },
 
     /**
@@ -1297,6 +1578,14 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
      * @param {Ext.data.Store} this The store.
      * @param {Ext.data.Model} record The Model instance that is set as the selected record.
      */
+
+	/**
+	 * @event updatedRecord
+	 * Fired when a Model instance has been updated in the Store. You should listen
+	 * for this event if you have to update a representation of the selected record in this store in your UI.
+	 * @param {Ext.data.Store} this The store.
+	 * @param {Ext.data.Model} record The Model instance that was updated.
+	 */
 
     /**
      * @private {Object/Ext.data.Model} _selectedRecord the currently selected record for the store.
@@ -1312,11 +1601,8 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
     setSelectedRecord: function(record, autoAdd) {
         FlowMVC.mvc.store.AbstractStore.logger.debug("setSelectedRecord");
 
-        // ExtJS and Touch get to the underlying model differently
-        var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
-
         // the record parameter must either be null an instance of the expected model for this store
-        if ( !(record instanceof modelClass) && (record != null) ) {
+        if ( !this.isModel(record) && (record != null) ) {
             Ext.Error.raise({
                 msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID
             });
@@ -1389,11 +1675,18 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
     /**
      * Update a model object on the store by replacing it with a new model
      *
-     * @param {Object/Ext.data.Model} model The model to replace existing model in store.
-     * @param {String} property The property to use to find model to be replaced.
+     * @param {Ext.data.Model} model The model to replace existing model in store.
+     * @param {String} property The property to use as the id to find the model to be replaced.
      */
     update: function(model, property) {
         property = property ? property : "id";
+
+	    // the record parameter must be non-null and an instance of the expected model for this store
+	    if ( (model == null) || (this.isModel(model) == false) ) {
+		    Ext.Error.raise({
+			    msg: FlowMVC.mvc.store.AbstractStore.ERROR_SET_UPDATE_PARAM_NOT_VALID
+		    });
+	    }
 
         if (Ext.getVersion("extjs")) {
             var index = this.find(property, model.get(property));
@@ -1404,6 +1697,8 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
             this.insert(index, model);
             this.removeAt(index+1);
             FlowMVC.mvc.store.AbstractStore.logger.debug("update: updating ExtJS model with " + property);
+	        this.fireEvent("updatedRecord", this, model);
+	        return model;
         } else {
             var value = model.data[property];
             var record = this.findRecord(property, value);
@@ -1415,8 +1710,27 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
                 record.dirty = true;
                 this.sync();
                 FlowMVC.mvc.store.AbstractStore.logger.debug("update: updating Touch model with " + property);
+	            this.fireEvent("updatedRecord", this, record);
+	            return model;
             }
         }
-    }
+
+	    return null;
+    },
+
+	/**
+	 * Determines if the model parameter is the expected model type for this store.
+	 *
+	 * @param {Object/Ext.data.Model} model The object being tested to determine if it's the expected model for
+	 * this store.
+	 * @return {Boolean} A flag indicating if the parameter is the expected model for this store.
+	 */
+	isModel: function(record) {
+
+		// ExtJS and Touch get to the underlying model differently
+		var modelClass = (Ext.getVersion("extjs")) ? this.model : this._model;
+		var bool = (record instanceof modelClass);
+		return (record instanceof modelClass);
+	}
 
 });

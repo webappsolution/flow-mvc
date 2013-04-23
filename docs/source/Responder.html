@@ -38,21 +38,6 @@
  */
 Ext.define(&quot;FlowMVC.mvc.service.rpc.Responder&quot;, {
 
-<span id='FlowMVC-mvc-service-rpc-Responder-property-success'>	/**
-</span>	 * {Function} success Reference to a method that handles a successful service.
-	 */
-    success:    null,
-
-<span id='FlowMVC-mvc-service-rpc-Responder-property-failure'>	/**
-</span>	 * Function} failure Reference to a method that handles a failed service.
-	 */
-    failure:    null,
-
-<span id='FlowMVC-mvc-service-rpc-Responder-property-scope'>	/**
-</span>	 * {Object} scope Reference to the object that has the success and failure handler methods.
-	 */
-    scope:      null,
-
     statics: {
 
 <span id='FlowMVC-mvc-service-rpc-Responder-property-logger'>        /**
@@ -75,8 +60,22 @@ Ext.define(&quot;FlowMVC.mvc.service.rpc.Responder&quot;, {
          * cannot be be null.
          */
         ERROR_SCOPE_MUST_BE_VALID_OBJECT: &quot;The constructor parameter 'scope' cannot be null or not an object&quot;
-
     },
+
+<span id='FlowMVC-mvc-service-rpc-Responder-property-success'>	/**
+</span>	 * {Function} success Reference to a method that handles a successful service.
+	 */
+	success:    null,
+
+<span id='FlowMVC-mvc-service-rpc-Responder-property-failure'>	/**
+</span>	 * Function} failure Reference to a method that handles a failed service.
+	 */
+	failure:    null,
+
+<span id='FlowMVC-mvc-service-rpc-Responder-property-scope'>	/**
+</span>	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 */
+	scope:      null,
 
 <span id='FlowMVC-mvc-service-rpc-Responder-method-constructor'>    /**
 </span>     * The constructor creates a Responder object with a success and failure method reference, as well as
