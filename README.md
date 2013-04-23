@@ -2,10 +2,10 @@
 
 FlowMVC builds on the work of [DeftJS](https://github.com/deftjs/), [Sencha ExtJS](http://www.sencha.com/products/extjs), and [Sencha Touch](http://www.sencha.com/products/touch) APIs with extensions that enable Flex and
 ActionScript developers to take their expertise and apply them to the HTML5/JavaScript world. It's a framework that
-users of Flex MVC-based architectures, such as Swiz or Parley, will be familiar with.
+users of Flex MVC-based architectures, such as Swiz, Parley or RobotLegs, will be familiar with.
 
 In addition, for enterprises looking to leverage intellectual capital across platforms with Sencha Touch and ExtJS, it
-provides an application structure with reusability and portability in mind encouraging the re-use of application and
+provides an application structure with reusability and portability in mind encouraging the re-use of core application and
 business logic.
 
 For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend),
