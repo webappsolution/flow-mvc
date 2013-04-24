@@ -26,7 +26,7 @@ you run little risk by not testing the view." [Fowler](http://martinfowler.com/e
 
 Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/WebAppSolutionInc/flow-mvc/wiki).
 
-*  [Consistant Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
+*  [Consistent Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
 *  [Model-View-Controller-Service Architecture](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS-Architecture)
 *  [Dependency Injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
 *  [Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
@@ -34,7 +34,6 @@ Full documentation on the features and usage of DeftJS is available in the [Wiki
 *  [Implementation of Passive View using Mediators](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators)
 *  [Jasmine Unit Tests for both functional and asynchronous code blocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests)
 *  [Reuse of code between ExtJS and Touch versions](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code)
-*  [JSDuck Documentation](https://github.com/senchalabs/jsduck)
 *  [FlowMVC API Docs](http://www.webappsolution.com)
 *  [Resources](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources)
 
