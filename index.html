@@ -155,14 +155,17 @@
 
 				<p class="documentationCopy"><b>FlowMVC works with ExtJS version 4.1 and up, Sencha Touch version 2.0 and up, and DeftJS version 0.8.0 and up.</b></p>
 
-				<h1>Goals</h1>
+				<h1>Highlights</h1>
 
 				<ul>
-					<li><b>Familiarity:</b> Provides constructs and patterns familiar to users of Flex MVC-based architectures.</li>
-					<li><b>Consistent Project Structure</b>: Builds on the prescriptive nature of Sencha MVC with the suggestive design of DeftJS.</li>
-					<li><b>Testability</b>: Promotes the use of Passive Views and Mediators; "with the view reduced to a dumb slave of the controller, 
-				you run little risk by not testing the view." <a href="http://martinfowler.com/eaaDev/PassiveScreen.html">Fowler</a>.</li>
-					<li><b>Reusability</b>: Provides further facilitation to the re-use of business layers between Sencha Touch and Sencha ExtJS code bases.</li>
+					<li>FlowMVC uses a Global Event Bus for communications and it's built into the framework.</li>
+					<li>FlowMVC DOES NOT use View Controllers as Service Controllers -- we strictly separate Mediators (that own views) from Service Controllers (that own services). Controllers "control flow" of the app -- they orchestrate the app flow with events.
+                        They do not control views and work with services at the same time.</li>
+					<li>FlowMVC has Service Objects separating server side logic into it's own layer.</li>
+					<li>FlowMVC has Mock Service Objects with delays built-in for async service stubbing.</li>
+                    <li>FlowMVC looks and feels like a robust OO client using traditional MVC architecture and IoC frameworks.</li>
+                    <li>FlowMVC has an awesome logger!</li>
+                    <li>FlowMVC has Service Objects that make srv calls...we do not allow models and stores to do so. We use both as domain objects/entities and/or collections only...</li>
 				</ul>
 
 				<h1>Documentation Overview</h1>
@@ -178,7 +181,6 @@
 					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators">Implementation of Passive View using Mediators</a></li>
 					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests">Jasmine Unit Tests for both functional and asynchronous code blocks</a></li>
 					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code">Reuse of code between ExtJS and Touch versions</a></li>
-					<li><a href="https://github.com/senchalabs/jsduck">JSDuck Documentation</a></li>
 					<li><a href="http://webappsolutioninc.github.io/flow-mvc/docs/">FlowMVC API Docs</a></li>
 					<li><a href="https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources">Resources</a></li>
 				</ul>
