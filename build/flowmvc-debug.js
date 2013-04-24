@@ -195,6 +195,30 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
+	 * Provides log grouping.
+	 */
+	group: function() {
+		try {
+			if(window.console && console.group && Ext.isFunction(console.group)) {
+				console.group(msg);
+			}
+		} catch (e) {
+		}
+	},
+
+	/**
+	 * Ends log grouping.
+	 */
+	groupEnd: function() {
+		try {
+			if(window.console && console.groupEnd && Ext.isFunction(console.groupEnd)) {
+				console.groupEnd(msg);
+			}
+		} catch (e) {
+		}
+	},
+
+	/**
 	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
 	 *
 	 * @return {String} A timestamp in the form of 16:11:45:956.
@@ -629,8 +653,9 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
  */
 
 /**
- * Contains references to the success and failure methods of an object making a service call.
- * It also contains a reference to the object using the AsyncToken (which has the success and failure methods).
+ * Contains a reference to a {FlowMVC.mvc.service.rpc.Responder}, an object making an asynchronous service call. The
+ * AsyncToken then appliers the success and failure callback methods to the service by inspecting and using the
+ * methods defined in the Responder object.
  */
 Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 
@@ -839,30 +864,40 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
  */
 
 /**
+ * Controllers act as the front door to services; they handle application-level events and execute the appropriate
+ * service. When a service succeeds or fails, it is the controller's responsibility to update model and store data
+ * (application state) and dispatch events alerting the rest of the application to the state of a service call.
+ *
  * The abstract controller class provides base functionality for all application controllers. The main purpose
- * of this class is to offer helper methods for service execution via the methods executeServiceCall(),
- * executeServiceCallWithAsyncToken(), and executeServiceCallWithPromises(). These methods wrap service calls
+ * of this class is to offer helper methods for service execution via the methods {@link FlowMVC.mvc.controller.AbstractController#executeServiceCall},
+ * executeServiceCallWithAsyncToken(), and executeServiceCallWithPromises(). The pattern to execute a service call was
+ * borrowed from the Swiz [ServiceHelper.executeServiceCall()](http://swizframework.jira.com/wiki/display/SWIZ/Service+Layer)
+ * implementation as it cleanly calls the service and adds custom success and failure handlers in one line:
+ *
+ * ## Example
+ *
+ * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
  * 
- * TODO
- *
- * is to simplify inter-controller communication by setting up application-level event bus listeners
- * during initialization. This can be done
- *
- * setupGlobalEventListeners()
- *
- * NOTE: removeGlobalEventListener() isn't currently implemented.
- *
- * In addition, the abstract controller provides some convenience methods that simplify service calls that use custom
- * success and failure handlers:
- *
- * executeServiceCall(service, method, args, success, failure, scope)
- *
- * The abstract controller is also the base class for all view mediators; we're really relying on Sencha
- * MVC design where a controller knows how to interact with a given view, so the base, abstract mediator extends
- * this abstract controller.
+ * Finally, controllers can be used to handle application-level processes and logic as they are in fact application
+ * aware and often "control" the flow and orchestration of the application.
  */
 Ext.define("FlowMVC.mvc.controller.AbstractController", {
     extend: "Ext.app.Controller",
+
+	requires: [
+		"FlowMVC.mvc.event.EventDispatcher"
+	],
+
+//	inject: [
+//		"eventBus"
+//	],
+	inject: {
+
+		/**
+		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 */
+		eventBus: "eventBus"
+	},
 
     statics: {
 
@@ -876,10 +911,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
          */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController")
     },
-
-    inject: [
-        "eventBus"
-    ],
 
     config: {
 
@@ -897,16 +928,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     init: function() {
         FlowMVC.mvc.controller.AbstractController.logger.debug("init");
 
-        try {
-            this.setupGlobalEventListeners();
-        } catch(err) {
-            FlowMVC.mvc.controller.AbstractController.logger.debug("[ERROR] AbstractController.init: " +
-                "\n\t " +
-                "Can't get access to the application property in the Controller because its undefined. " +
-                "\n\t " +
-                "If a concrete controller class extends this, why is this.getApplication() undefined in " +
-                "AbstractController.init() ???");
-        }
+	    this.setupGlobalEventListeners();
     },
 
     /**
@@ -920,7 +942,11 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 
     /**
      * Simplifies the process of executing a service call that requires custom asynchronous success and failure
-     * handlers; create a responder object and add it to the service before making the actual service call.
+     * handlers.
+     *
+     * This method determines if the service uses AsyncTokens or Promises so the API used to execute service calls is
+     * the same; it's really just a wrapper to the concrete methods that execute service calls with AsyncTokens or
+     * Promises.
      *
      * Note that the service call isn't passed in as a function that actually executes the service; it's passed
      * in via a reference to the service object, the actual service method, and the service method's parameters.
@@ -932,11 +958,11 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
      *
      * @param {Object} service Reference to the actual service.
-     * @param {Function} method Reference to the method on the service object that makes the call.
-     * @param {Array} args Array of parameters used in the service calls method.
-     * @param success
-     * @param failure
-     * @param scope
+     * @param {Function} method Reference to the method on the service object that executes the service call.
+     * @param {Array} args Array of parameters used in the service call's method.
+     * @param {Function} success Callback method for a successful service.
+     * @param {Function} failure Callback method for a failed service.
+     * @param {Object} scope The object that contains the success and failure callback methods.
      */
     executeServiceCall: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.group("FlowMVC.mvc.controller.AbstractController.executeServiceCall");
@@ -951,26 +977,28 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
             token = this.executeServiceCallWithAsyncToken(service, method, args, success, failure, scope);
         }
 
-//        if(service.getUsePromise()) {
-//            FlowMVC.mvc.controller.AbstractController.logger.info("executeServiceCall: Using Promises");
-//            token = method.apply(service, args).then({
-//                success: success,
-//                failure: failure,
-//                scope: scope
-//            }).always(function() {
-//                // Do something whether call succeeded or failed
-//                FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCall: always do after promise");
-//            });
-//        } else {
-//            FlowMVC.mvc.controller.AbstractController.logger.info("executeServiceCall: Using AsyncToken");
-//            var responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", success, failure, scope);
-//            token = method.apply(service, args);
-//            token.addResponder(responder);
-//        }
-
         return token;
     },
 
+	/**
+	 * Executes a service call that uses AsyncTokens.
+	 *
+	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
+	 * in via a reference to the service object, the actual service method, and the service method's parameters.
+	 * This is done to prevent the service call from being executed before the responder is being set on it.
+	 *
+	 * ## Example
+	 *
+	 * var service = this.getAuthenticationService();
+	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+	 *
+	 * @param {Object} service Reference to the actual service.
+	 * @param {Function} method Reference to the method on the service object that executes the service call.
+	 * @param {Array} args Array of parameters used in the service call's method.
+	 * @param {Function} success Callback method for a successful service.
+	 * @param {Function} failure Callback method for a failed service.
+	 * @param {Object} scope The object that contains the success and failure callback methods.
+	 */
     executeServiceCallWithAsyncToken: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithAsyncToken");
 
@@ -981,15 +1009,25 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
         return token;
     },
 
-    /**
-     *
-     * @param service
-     * @param method
-     * @param args
-     * @param success
-     * @param failure
-     * @param scope
-     */
+	/**
+	 * Executes a service call that uses Promises.
+	 *
+	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
+	 * in via a reference to the service object, the actual service method, and the service method's parameters.
+	 * This is done to prevent the service call from being executed before the responder is being set on it.
+	 *
+	 * ## Example
+	 *
+	 * var service = this.getAuthenticationService();
+	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+	 *
+	 * @param {Object} service Reference to the actual service.
+	 * @param {Function} method Reference to the method on the service object that executes the service call.
+	 * @param {Array} args Array of parameters used in the service call's method.
+	 * @param {Function} success Callback method for a successful service.
+	 * @param {Function} failure Callback method for a failed service.
+	 * @param {Object} scope The object that contains the success and failure callback methods.
+	 */
     executeServiceCallWithPromises: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithPromises");
 
@@ -998,6 +1036,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
             failure: failure,
             scope: scope
         }).always(function() {
+		    // TODO: Consider adding in an additional method callback for this
             // Do something whether call succeeded or failed
             FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCall: always do after promise");
         });
@@ -1009,7 +1048,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      *
      * @param {String/Object} className Either a string or an object with a value property containing the fully
      * qualified String name of a service class.
-     * @return {null/Object} An instance of the service class or null.
+     * @return {Object/null} An instance of the service class or null.
      */
     getService: function(className) {
         className = (className && className.value) ? className.value : className;
@@ -1069,13 +1108,18 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
  */
 
 /**
- * The mediator essentially fulfills the passive view pattern for a given view -- acts like a view controller,
- * but chose to use the suffix Mediator simply to distinguish it from application controllers that interact with
- * services and models.
+ * Mediators fulfil the passive view pattern and are entirely responsible for a single view and it's sub-components;
+ * it is within a mediator that we handle view logic, events and user interactions, and data marshaling. It is expected
+ * that mediators will need to be partly or entirely created from scratch for each platform. It may also be possible to
+ * create base mediators for some desktop and mobile views for additional reusability, leaving the specifics to the
+ * concrete, platform implementations.
  *
- * Handles view events, typically generated from user gestures, manipulates the view with animations, transitions,
- * and/or dynamically building components within the view, and works with the view's API (again with events)
- * but also by way of getters and setters in order to bind data to and from the view.
+ * Mediators are also aware of the application-level event bus and can thus partake in dispatching and listening to it's
+ * events. In order to facilitate a separation of concerns between an object that manages a view (mediators) and an
+ * object that's responsible for executing services and working with model data (controllers), the mediators simply
+ * broadcast events that controllers handle in order to execute services
+ *
+ * Simply put, while application aware, mediators numero uno role is to manage it's specific view buddy.
  */
 Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     extend: "Deft.mvc.ViewController",
@@ -1088,23 +1132,13 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.mediator.AbstractMediator")
     },
 
-    inject: {
+	inject: {
 
-        /**
-         * TODO
-         */
-        eventBus: "eventBus"
-    },
-
-    config: {
-
-        /**
-         * @cfg {FlowMVC.mvc.event.EventDispatcher} eventBus The application-level event bus. This is
-         * injected
-         * @accessor
-         */
-//        eventBus: null
-    },
+		/**
+		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 */
+		eventBus: "eventBus"
+	},
 
     /**
      * Sets up simple accessor method shortcuts for the global event bus.
@@ -1112,16 +1146,7 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     init: function() {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("init");
 
-        try {
-            this.setupGlobalEventListeners();
-        } catch(err) {
-            FlowMVC.mvc.mediator.AbstractMediator.logger.error("init: " +
-                "\n\t " +
-                "Can't get access to the application property in the Controller because its undefined. " +
-                "\n\t " +
-                "If a concrete controller class extends this, why is this.getApplication() undefined in " +
-                "AbstractMediator.init() ???");
-        }
+	    this.setupGlobalEventListeners();
     },
 
     /**
@@ -1178,7 +1203,7 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
      * all components matching the specified xtype.
      *
      * @param {String} xtype The xtype used to query for a view in the application.
-     * @return {Object/Object[]} A single view or list of views matchig the provided xtype.
+     * @return {Object/Object[]} A single view or list of views matching the provided xtype.
      */
     getViewByXType: function(xtype, isSingeltonView) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("getViewByXType: xtype = ", xtype);
@@ -1431,11 +1456,8 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     delayedSuccess: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("delayedSuccess");
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -1458,11 +1480,8 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     delayedFailure: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("delayedFailure");
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -1477,7 +1496,7 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     },
 
     /**
-     * Accessor method that determines if this sercvice uses promises or asyn tokens.
+     * Accessor method that determines if this service uses promises or AsyncTokens.
      *
      * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
      * Promise
@@ -1496,8 +1515,7 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
      * @return {Number} The number of milliseconds to delay the mock service callback.
      */
     getDelayInMilliSeconds: function(delayInMilliSeconds) {
-        delayInMilliSeconds =
-            (delayInMilliSeconds == null)
+        delayInMilliSeconds = (delayInMilliSeconds == null)
             ? FlowMVC.mvc.service.mock.AbstractServiceMock.DELAY_IN_MILLISECONDS
             : delayInMilliSeconds;
 

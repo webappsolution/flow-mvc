@@ -16,8 +16,9 @@
  */
 
 /**
- * Contains references to the success and failure methods of an object making a service call.
- * It also contains a reference to the object using the AsyncToken (which has the success and failure methods).
+ * Contains a reference to a {FlowMVC.mvc.service.rpc.Responder}, an object making an asynchronous service call. The
+ * AsyncToken then appliers the success and failure callback methods to the service by inspecting and using the
+ * methods defined in the Responder object.
  */
 Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 

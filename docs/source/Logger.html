@@ -204,6 +204,30 @@ Ext.define(&quot;FlowMVC.logger.Logger&quot;, {
 		this.internalLog(FlowMVC.logger.Logger.LEVEL_FATAL, arguments);
 	},
 
+<span id='FlowMVC-logger-Logger-method-group'>	/**
+</span>	 * Provides log grouping.
+	 */
+	group: function() {
+		try {
+			if(window.console &amp;&amp; console.group &amp;&amp; Ext.isFunction(console.group)) {
+				console.group(msg);
+			}
+		} catch (e) {
+		}
+	},
+
+<span id='FlowMVC-logger-Logger-method-groupEnd'>	/**
+</span>	 * Ends log grouping.
+	 */
+	groupEnd: function() {
+		try {
+			if(window.console &amp;&amp; console.groupEnd &amp;&amp; Ext.isFunction(console.groupEnd)) {
+				console.groupEnd(msg);
+			}
+		} catch (e) {
+		}
+	},
+
 <span id='FlowMVC-logger-Logger-method-getTimestamp'>	/**
 </span>	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
 	 *

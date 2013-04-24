@@ -16,13 +16,18 @@
  */
 
 /**
- * The mediator essentially fulfills the passive view pattern for a given view -- acts like a view controller,
- * but chose to use the suffix Mediator simply to distinguish it from application controllers that interact with
- * services and models.
+ * Mediators fulfil the passive view pattern and are entirely responsible for a single view and it's sub-components;
+ * it is within a mediator that we handle view logic, events and user interactions, and data marshaling. It is expected
+ * that mediators will need to be partly or entirely created from scratch for each platform. It may also be possible to
+ * create base mediators for some desktop and mobile views for additional reusability, leaving the specifics to the
+ * concrete, platform implementations.
  *
- * Handles view events, typically generated from user gestures, manipulates the view with animations, transitions,
- * and/or dynamically building components within the view, and works with the view's API (again with events)
- * but also by way of getters and setters in order to bind data to and from the view.
+ * Mediators are also aware of the application-level event bus and can thus partake in dispatching and listening to it's
+ * events. In order to facilitate a separation of concerns between an object that manages a view (mediators) and an
+ * object that's responsible for executing services and working with model data (controllers), the mediators simply
+ * broadcast events that controllers handle in order to execute services
+ *
+ * Simply put, while application aware, mediators numero uno role is to manage it's specific view buddy.
  */
 Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     extend: "Deft.mvc.ViewController",
@@ -35,23 +40,13 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.mediator.AbstractMediator")
     },
 
-    inject: {
+	inject: {
 
-        /**
-         * TODO
-         */
-        eventBus: "eventBus"
-    },
-
-    config: {
-
-        /**
-         * @cfg {FlowMVC.mvc.event.EventDispatcher} eventBus The application-level event bus. This is
-         * injected
-         * @accessor
-         */
-//        eventBus: null
-    },
+		/**
+		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 */
+		eventBus: "eventBus"
+	},
 
     /**
      * Sets up simple accessor method shortcuts for the global event bus.
@@ -59,16 +54,7 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     init: function() {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("init");
 
-        try {
-            this.setupGlobalEventListeners();
-        } catch(err) {
-            FlowMVC.mvc.mediator.AbstractMediator.logger.error("init: " +
-                "\n\t " +
-                "Can't get access to the application property in the Controller because its undefined. " +
-                "\n\t " +
-                "If a concrete controller class extends this, why is this.getApplication() undefined in " +
-                "AbstractMediator.init() ???");
-        }
+	    this.setupGlobalEventListeners();
     },
 
     /**
@@ -125,7 +111,7 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
      * all components matching the specified xtype.
      *
      * @param {String} xtype The xtype used to query for a view in the application.
-     * @return {Object/Object[]} A single view or list of views matchig the provided xtype.
+     * @return {Object/Object[]} A single view or list of views matching the provided xtype.
      */
     getViewByXType: function(xtype, isSingeltonView) {
         FlowMVC.mvc.mediator.AbstractMediator.logger.debug("getViewByXType: xtype = ", xtype);

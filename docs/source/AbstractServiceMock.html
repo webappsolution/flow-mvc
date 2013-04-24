@@ -60,11 +60,8 @@ Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
     delayedSuccess: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;delayedSuccess&quot;);
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -87,11 +84,8 @@ Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
     delayedFailure: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug(&quot;delayedFailure&quot;);
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -106,7 +100,7 @@ Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
     },
 
 <span id='FlowMVC-mvc-service-mock-AbstractServiceMock-method-getTokenOrPromise'>    /**
-</span>     * Accessor method that determines if this sercvice uses promises or asyn tokens.
+</span>     * Accessor method that determines if this service uses promises or AsyncTokens.
      *
      * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
      * Promise
@@ -125,8 +119,7 @@ Ext.define(&quot;FlowMVC.mvc.service.mock.AbstractServiceMock&quot;, {
      * @return {Number} The number of milliseconds to delay the mock service callback.
      */
     getDelayInMilliSeconds: function(delayInMilliSeconds) {
-        delayInMilliSeconds =
-            (delayInMilliSeconds == null)
+        delayInMilliSeconds = (delayInMilliSeconds == null)
             ? FlowMVC.mvc.service.mock.AbstractServiceMock.DELAY_IN_MILLISECONDS
             : delayInMilliSeconds;
 

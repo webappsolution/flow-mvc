@@ -43,11 +43,8 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     delayedSuccess: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("delayedSuccess");
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -70,11 +67,8 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     delayedFailure: function(response, delayInMilliSeconds) {
         FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("delayedFailure");
 
-        var token;
-        var me;
-
-        token = this.getTokenOrPromise();
-        me = this;
+	    var token = this.getTokenOrPromise();
+	    var me = this;
 
         // Using a delayed task in order to give the hide animation above
         // time to finish before executing the next steps.
@@ -89,7 +83,7 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
     },
 
     /**
-     * Accessor method that determines if this sercvice uses promises or asyn tokens.
+     * Accessor method that determines if this service uses promises or AsyncTokens.
      *
      * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
      * Promise
@@ -108,8 +102,7 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
      * @return {Number} The number of milliseconds to delay the mock service callback.
      */
     getDelayInMilliSeconds: function(delayInMilliSeconds) {
-        delayInMilliSeconds =
-            (delayInMilliSeconds == null)
+        delayInMilliSeconds = (delayInMilliSeconds == null)
             ? FlowMVC.mvc.service.mock.AbstractServiceMock.DELAY_IN_MILLISECONDS
             : delayInMilliSeconds;
 

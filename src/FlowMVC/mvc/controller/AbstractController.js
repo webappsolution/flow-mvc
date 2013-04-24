@@ -16,30 +16,40 @@
  */
 
 /**
+ * Controllers act as the front door to services; they handle application-level events and execute the appropriate
+ * service. When a service succeeds or fails, it is the controller's responsibility to update model and store data
+ * (application state) and dispatch events alerting the rest of the application to the state of a service call.
+ *
  * The abstract controller class provides base functionality for all application controllers. The main purpose
- * of this class is to offer helper methods for service execution via the methods executeServiceCall(),
- * executeServiceCallWithAsyncToken(), and executeServiceCallWithPromises(). These methods wrap service calls
+ * of this class is to offer helper methods for service execution via the methods {@link FlowMVC.mvc.controller.AbstractController#executeServiceCall},
+ * executeServiceCallWithAsyncToken(), and executeServiceCallWithPromises(). The pattern to execute a service call was
+ * borrowed from the Swiz [ServiceHelper.executeServiceCall()](http://swizframework.jira.com/wiki/display/SWIZ/Service+Layer)
+ * implementation as it cleanly calls the service and adds custom success and failure handlers in one line:
+ *
+ * ## Example
+ *
+ * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
  * 
- * TODO
- *
- * is to simplify inter-controller communication by setting up application-level event bus listeners
- * during initialization. This can be done
- *
- * setupGlobalEventListeners()
- *
- * NOTE: removeGlobalEventListener() isn't currently implemented.
- *
- * In addition, the abstract controller provides some convenience methods that simplify service calls that use custom
- * success and failure handlers:
- *
- * executeServiceCall(service, method, args, success, failure, scope)
- *
- * The abstract controller is also the base class for all view mediators; we're really relying on Sencha
- * MVC design where a controller knows how to interact with a given view, so the base, abstract mediator extends
- * this abstract controller.
+ * Finally, controllers can be used to handle application-level processes and logic as they are in fact application
+ * aware and often "control" the flow and orchestration of the application.
  */
 Ext.define("FlowMVC.mvc.controller.AbstractController", {
     extend: "Ext.app.Controller",
+
+	requires: [
+		"FlowMVC.mvc.event.EventDispatcher"
+	],
+
+//	inject: [
+//		"eventBus"
+//	],
+	inject: {
+
+		/**
+		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 */
+		eventBus: "eventBus"
+	},
 
     statics: {
 
@@ -53,10 +63,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
          */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController")
     },
-
-    inject: [
-        "eventBus"
-    ],
 
     config: {
 
@@ -74,16 +80,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
     init: function() {
         FlowMVC.mvc.controller.AbstractController.logger.debug("init");
 
-        try {
-            this.setupGlobalEventListeners();
-        } catch(err) {
-            FlowMVC.mvc.controller.AbstractController.logger.debug("[ERROR] AbstractController.init: " +
-                "\n\t " +
-                "Can't get access to the application property in the Controller because its undefined. " +
-                "\n\t " +
-                "If a concrete controller class extends this, why is this.getApplication() undefined in " +
-                "AbstractController.init() ???");
-        }
+	    this.setupGlobalEventListeners();
     },
 
     /**
@@ -97,7 +94,11 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 
     /**
      * Simplifies the process of executing a service call that requires custom asynchronous success and failure
-     * handlers; create a responder object and add it to the service before making the actual service call.
+     * handlers.
+     *
+     * This method determines if the service uses AsyncTokens or Promises so the API used to execute service calls is
+     * the same; it's really just a wrapper to the concrete methods that execute service calls with AsyncTokens or
+     * Promises.
      *
      * Note that the service call isn't passed in as a function that actually executes the service; it's passed
      * in via a reference to the service object, the actual service method, and the service method's parameters.
@@ -109,11 +110,11 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
      *
      * @param {Object} service Reference to the actual service.
-     * @param {Function} method Reference to the method on the service object that makes the call.
-     * @param {Array} args Array of parameters used in the service calls method.
-     * @param success
-     * @param failure
-     * @param scope
+     * @param {Function} method Reference to the method on the service object that executes the service call.
+     * @param {Array} args Array of parameters used in the service call's method.
+     * @param {Function} success Callback method for a successful service.
+     * @param {Function} failure Callback method for a failed service.
+     * @param {Object} scope The object that contains the success and failure callback methods.
      */
     executeServiceCall: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.group("FlowMVC.mvc.controller.AbstractController.executeServiceCall");
@@ -128,26 +129,28 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
             token = this.executeServiceCallWithAsyncToken(service, method, args, success, failure, scope);
         }
 
-//        if(service.getUsePromise()) {
-//            FlowMVC.mvc.controller.AbstractController.logger.info("executeServiceCall: Using Promises");
-//            token = method.apply(service, args).then({
-//                success: success,
-//                failure: failure,
-//                scope: scope
-//            }).always(function() {
-//                // Do something whether call succeeded or failed
-//                FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCall: always do after promise");
-//            });
-//        } else {
-//            FlowMVC.mvc.controller.AbstractController.logger.info("executeServiceCall: Using AsyncToken");
-//            var responder = Ext.create("FlowMVC.mvc.service.rpc.Responder", success, failure, scope);
-//            token = method.apply(service, args);
-//            token.addResponder(responder);
-//        }
-
         return token;
     },
 
+	/**
+	 * Executes a service call that uses AsyncTokens.
+	 *
+	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
+	 * in via a reference to the service object, the actual service method, and the service method's parameters.
+	 * This is done to prevent the service call from being executed before the responder is being set on it.
+	 *
+	 * ## Example
+	 *
+	 * var service = this.getAuthenticationService();
+	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+	 *
+	 * @param {Object} service Reference to the actual service.
+	 * @param {Function} method Reference to the method on the service object that executes the service call.
+	 * @param {Array} args Array of parameters used in the service call's method.
+	 * @param {Function} success Callback method for a successful service.
+	 * @param {Function} failure Callback method for a failed service.
+	 * @param {Object} scope The object that contains the success and failure callback methods.
+	 */
     executeServiceCallWithAsyncToken: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithAsyncToken");
 
@@ -158,15 +161,25 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
         return token;
     },
 
-    /**
-     *
-     * @param service
-     * @param method
-     * @param args
-     * @param success
-     * @param failure
-     * @param scope
-     */
+	/**
+	 * Executes a service call that uses Promises.
+	 *
+	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
+	 * in via a reference to the service object, the actual service method, and the service method's parameters.
+	 * This is done to prevent the service call from being executed before the responder is being set on it.
+	 *
+	 * ## Example
+	 *
+	 * var service = this.getAuthenticationService();
+	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+	 *
+	 * @param {Object} service Reference to the actual service.
+	 * @param {Function} method Reference to the method on the service object that executes the service call.
+	 * @param {Array} args Array of parameters used in the service call's method.
+	 * @param {Function} success Callback method for a successful service.
+	 * @param {Function} failure Callback method for a failed service.
+	 * @param {Object} scope The object that contains the success and failure callback methods.
+	 */
     executeServiceCallWithPromises: function(service, method, args, success, failure, scope) {
         FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCallWithPromises");
 
@@ -175,6 +188,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
             failure: failure,
             scope: scope
         }).always(function() {
+		    // TODO: Consider adding in an additional method callback for this
             // Do something whether call succeeded or failed
             FlowMVC.mvc.controller.AbstractController.logger.debug("executeServiceCall: always do after promise");
         });
@@ -186,7 +200,7 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      *
      * @param {String/Object} className Either a string or an object with a value property containing the fully
      * qualified String name of a service class.
-     * @return {null/Object} An instance of the service class or null.
+     * @return {Object/null} An instance of the service class or null.
      */
     getService: function(className) {
         className = (className && className.value) ? className.value : className;

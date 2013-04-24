@@ -188,6 +188,30 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
+	 * Provides log grouping.
+	 */
+	group: function() {
+		try {
+			if(window.console && console.group && Ext.isFunction(console.group)) {
+				console.group(msg);
+			}
+		} catch (e) {
+		}
+	},
+
+	/**
+	 * Ends log grouping.
+	 */
+	groupEnd: function() {
+		try {
+			if(window.console && console.groupEnd && Ext.isFunction(console.groupEnd)) {
+				console.groupEnd(msg);
+			}
+		} catch (e) {
+		}
+	},
+
+	/**
 	 * Creates a print-friendly timestamp in the form of 16:11:45:956 for logging purposes.
 	 *
 	 * @return {String} A timestamp in the form of 16:11:45:956.
