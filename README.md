@@ -26,7 +26,7 @@ you run little risk by not testing the view." [Fowler](http://martinfowler.com/e
 
 Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/WebAppSolutionInc/flow-mvc/wiki).
 
-*  [Consistant Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
+*  [Consistent Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
 *  [Model-View-Controller-Service Architecture](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS-Architecture)
 *  [Dependency Injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
 *  [Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
