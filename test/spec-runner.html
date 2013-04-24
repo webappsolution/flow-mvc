@@ -18,6 +18,12 @@
 
     <!-- Include Sencha libs based on passed URL params. -->
     <script type="text/javascript">
+
+	    /**
+	     * Grabs a hash of all the URL query string params.
+	     *
+	     * @returns {{}}
+	     */
         function getUrlVars() {
             var vars = {};
             var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -26,6 +32,14 @@
             return vars;
         }
 
+	    /**
+	     * Updates the URL query string parameters.
+	     *
+	     * @param uri   The URL in the browser window.
+	     * @param key   Th e name of the query string parameter to update.
+	     * @param value The value to update the query string parameter with.
+	     * @returns {*} The updated URL.
+	     */
         function updateQueryStringParameter(uri, key, value) {
             var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
             separator = uri.indexOf('?') !== -1 ? "&" : "?";
@@ -37,6 +51,11 @@
             }
         }
 
+        /**
+         * Handle the click of the debug checkbox and reload the window to load the correct framework version.
+         *
+         * @param checkBox  Reference to the debug checkbox.
+         */
         function onDebugCheckBoxChg(checkBox) {
             if(getUrlVars()["debug"] == undefined) {
                 window.location += "&debug=" + checkBox.checked;
@@ -45,6 +64,12 @@
             }
         }
 
+        /**
+         * Get the sencha framework URL suffix -- either the production or debug vr of the framework.
+         *
+         * @param debug
+         * @returns {string}
+         */
         function getSenchaURLSuffix(debug) {
             return (debug == "true") ? "-debug.js" : ".js";
         }
