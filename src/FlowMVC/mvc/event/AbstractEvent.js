@@ -23,26 +23,28 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.AbstractEvent"),
 
         /**
-         * {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
+         * @property {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
          * cannot be be null or an empty string.
+         * @static
          */
         ERROR_TYPE_MUST_BE_VALID_STRING: "The constructor parameter 'type' cannot be null or an empty string."
     },
 
     /**
-     * {String} type The event type or string name of the event; this is the token client objects subscribe to
+     * @property {String} type The event type or string name of the event; this is the token client objects subscribe to
      * when listening for application-level events.
      */
     type: "",
 
     /**
-     * {Object} data A generic data property for any event.
+     * @property {Object} data A generic data property for any event.
      */
     data: null,
 

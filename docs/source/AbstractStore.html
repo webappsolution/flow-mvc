@@ -43,27 +43,31 @@ Ext.define(&quot;FlowMVC.mvc.store.AbstractStore&quot;, {
 
     statics: {
 
-<span id='FlowMVC-mvc-store-AbstractStore-property-logger'>        /**
-</span>         * The logger for the object.
-         */
+<span id='FlowMVC-mvc-store-AbstractStore-static-property-logger'>	    /**
+</span>	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.store.AbstractStore&quot;),
 
-<span id='FlowMVC-mvc-store-AbstractStore-property-ERROR_SET_DATA_PARAM_NOT_VALID'>        /**
-</span>         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+<span id='FlowMVC-mvc-store-AbstractStore-static-property-ERROR_SET_DATA_PARAM_NOT_VALID'>        /**
+</span>         * @property {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
          * cannot be anything other than null or an array.
+         * @static
          */
         ERROR_SET_DATA_PARAM_NOT_VALID: &quot;The setData() method's 'data' parameter must be an array or null.&quot;,
 
-<span id='FlowMVC-mvc-store-AbstractStore-property-ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID'>        /**
-</span>         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+<span id='FlowMVC-mvc-store-AbstractStore-static-property-ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID'>        /**
+</span>         * @property {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
          * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         * @static
          */
         ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: &quot;The setSelectedRecord() method's 'record' parameter must null or &quot; +
             &quot;be an instance of the expected model for this store.&quot;,
 
-<span id='FlowMVC-mvc-store-AbstractStore-property-ERROR_SET_UPDATE_PARAM_NOT_VALID'>	    /**
-</span>	     * {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
+<span id='FlowMVC-mvc-store-AbstractStore-static-property-ERROR_SET_UPDATE_PARAM_NOT_VALID'>	    /**
+</span>	     * @property {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
 	     * method's parameter must be not-null and an instance of the expected model for this store.
+	     * @static
 	     */
 	    ERROR_SET_UPDATE_PARAM_NOT_VALID: &quot;The update() method's 'record' parameter must be not null and &quot; +
 		    &quot;be an instance of the expected model for this store.&quot;

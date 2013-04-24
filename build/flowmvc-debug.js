@@ -26,7 +26,7 @@ Open source under the [GNU General Public License](http://www.gnu.org/licenses).
  * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
  * of bells and whistles; simply put, this logger offers console logging as the only target, no filtering by context
  * or leg-level, and a fixed output that's not configurable. There are many other logging libraries that support this
- * type of advanced logging support: log4javascript http://log4javascript.org/, log4js-ext https://code.google.com/p/log4js-ext/
+ * type of advanced logging support: [log4javascript](http://log4javascript.org/), [log4js-ext](https://code.google.com/p/log4js-ext/)
  * and so on.
  *
  * The logger provides a simple wrapper to the console but with some added benefits like checking for console
@@ -54,37 +54,44 @@ Ext.define("FlowMVC.logger.Logger", {
 	statics: {
 
 		/**
-		 * {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 * @property {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 * @static
 		 */
 		isEnabled: true,
 
 		/**
-		 * {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 * @property {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 * @static
 		 */
 		LEVEL_LOG: "LOG",
 
 		/**
-		 * {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 * @property {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 * @static
 		 */
 		LEVEL_DEBUG: "DEBUG",
 
 		/**
-		 * {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 * @property {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 * @static
 		 */
 		LEVEL_INFO: "INFO",
 
 		/**
-		 * {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 * @property {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 * @static
 		 */
 		LEVEL_WARN: "WARN",
 
 		/**
-		 * {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 * @property {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 * @static
 		 */
 		LEVEL_ERROR: "ERROR",
 
 		/**
-		 * {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 * @property {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 * @static
 		 */
 		LEVEL_FATAL: "FATAL",
 
@@ -96,6 +103,7 @@ Ext.define("FlowMVC.logger.Logger", {
 		 * @param {String} context The string name used for the logger. This is often the class name of the object the
 		 * logger is used in.
 		 * @returns {FlowMVC.logger.Logger} A FlowMVC logger.
+		 * @static
 		 */
 		getLogger: function(context) {
 			var logger;
@@ -121,7 +129,8 @@ Ext.define("FlowMVC.logger.Logger", {
 		 * The use of the singleton property of the returned object ensures that the logger is unique and created
 		 * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
 		 *
-		 * @returns {{fn: Function, singleton: boolean}}
+		 * @returns {{fn: Function, singleton: Boolean}}
+		 * @static
 		 */
 		getInjectableLogger: function() {
 
@@ -138,7 +147,8 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
-	 * {String} context String name to be used when logging; typically this is the client object's fully-qualified name.
+	 * @property {String} context String name to be used when logging; typically this is the client object's
+	 * fully-qualified name.
 	 */
 	context: null,
 
@@ -435,6 +445,7 @@ Ext.define("FlowMVC.util.UIDUtil", {
          * http://www.broofa.com/blog/?p=151
          *
          * @return {String} A unique ID in the form of C4A56B5B-AC4B-46FB-AE7D-BAF45154A95E.
+         * @static
          */
         randomUUID: function() {
             var s = [], itoh = '0123456789ABCDEF';
@@ -477,11 +488,7 @@ Ext.define("FlowMVC.util.UIDUtil", {
 
 /**
  * The main purpose of this class is to provide loosely coupled object communication by wrapping
- * the application-level event bus using simple, helper methods for adding, removing, and dispatching events:
- *
- * addGlobalEventListener(type, handler, scope)
- * dispatchGlobalEvent(event, args)
- * removeGlobalEventListener()
+ * the application-level event bus using simple, helper methods for adding, removing, and dispatching events.
  */
 Ext.define("FlowMVC.mvc.event.EventDispatcher", {
     extend: "Ext.util.Observable",
@@ -489,7 +496,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
 	statics: {
 
 		/**
-		 * The logger for the object.
+		 * @property {FlowMVC.logger.Logger} logger The logger for the object.
+		 * @static
 		 */
 		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher")
 	},
@@ -501,8 +509,9 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * var evt = Ext.create("CafeTownsend.event.AuthenticationEvent", CafeTownsend.event.AuthenticationEvent.LOGIN, username, password);
-     * this.dispatchGlobalEvent(evt);
+     *      @exampleTODO preview
+     *      var evt = Ext.create("CafeTownsend.event.AuthenticationEvent", CafeTownsend.event.AuthenticationEvent.LOGIN, username, password);
+     *      this.dispatchGlobalEvent(evt);
      *
      * @param {FlowMVC.mvc.event.AbstractEvent/Object/String} event The event object to fire containing
      * a property called 'type' or a string representing the event name or type.
@@ -529,7 +538,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * this.addGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
+     *      @exampleTODO preview
+     *      this.addGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
      *
      * @param {String/String[]/Object} type The name or type of the event to listen for. May also be an object who's property names are
      * event names. If the event being dispatched extends FlowMVC.mvc.event.AbstractEvent, the types for the event
@@ -553,7 +563,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * this.removeGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
+     *      @exampleTODO preview
+     *      this.removeGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
      *
      * @param {String/String[]/Object} type The name or type of the event to listen for. May also be an object who's property names are
      * event names. If the event being dispatched extends FlowMVC.mvc.event.AbstractEvent, the types for the event
@@ -595,26 +606,28 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.AbstractEvent"),
 
         /**
-         * {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
+         * @property {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
          * cannot be be null or an empty string.
+         * @static
          */
         ERROR_TYPE_MUST_BE_VALID_STRING: "The constructor parameter 'type' cannot be null or an empty string."
     },
 
     /**
-     * {String} type The event type or string name of the event; this is the token client objects subscribe to
+     * @property {String} type The event type or string name of the event; this is the token client objects subscribe to
      * when listening for application-level events.
      */
     type: "",
 
     /**
-     * {Object} data A generic data property for any event.
+     * @property {Object} data A generic data property for any event.
      */
     data: null,
 
@@ -666,18 +679,19 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 	statics: {
 
 		/**
-		 * The logger for the object.
+		 * @property {FlowMVC.logger.Logger} logger The logger for the object.
+		 * @static
 		 */
 		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.AsyncToken")
 	},
 
     /**
-     * {String} id The unique ID of the token.
+     * @property {String} id The unique ID of the token.
      */
     id: null,
 
     /**
-     * {FlowMVC.mvc.service.rpc.Responder/Object} responder The object that contains success and failure methods
+     * @property {FlowMVC.mvc.service.rpc.Responder/Object} responder The object that contains success and failure methods
      * used for asynchronous service callbacks.
      */
     responder: null,
@@ -775,40 +789,46 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.Responder"),
 
         /**
-         * {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
+         * @property {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
          * cannot be be null or an not a function.
+         * @static
          */
         ERROR_SUCCESS_MUST_BE_VALID_FUNCTION: "The constructor parameter 'success' cannot be null or not a function.",
+
         /**
-         * {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
+         * @property {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
          * cannot be be null or an not a function.
+         * @static
          */
         ERROR_FAILURE_MUST_BE_VALID_FUNCTION: "The constructor parameter 'failure' cannot be null or not a function.",
+
         /**
-         * {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
+         * @property {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
          * cannot be be null.
+         * @static
          */
         ERROR_SCOPE_MUST_BE_VALID_OBJECT: "The constructor parameter 'scope' cannot be null or not an object"
     },
 
 	/**
-	 * {Function} success Reference to a method that handles a successful service.
+	 * @property {Function} success Reference to a method that handles a successful service.
 	 */
 	success:    null,
 
 	/**
-	 * Function} failure Reference to a method that handles a failed service.
+	 * @property {Function} failure Reference to a method that handles a failed service.
 	 */
 	failure:    null,
 
 	/**
-	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 * @property {Object} scope Reference to the object that has the success and failure handler methods.
 	 */
 	scope:      null,
 
@@ -876,7 +896,8 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
  *
  * ## Example
  *
- * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+ *      @exampleTODO preview
+ *      this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
  * 
  * Finally, controllers can be used to handle application-level processes and logic as they are in fact application
  * aware and often "control" the flow and orchestration of the application.
@@ -888,28 +909,27 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 		"FlowMVC.mvc.event.EventDispatcher"
 	],
 
-//	inject: [
-//		"eventBus"
-//	],
 	inject: {
 
 		/**
-		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 * @property {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
 		 */
 		eventBus: "eventBus"
 	},
 
     statics: {
 
-        /**
-         * {Ext.app.Application} ROOT_APPLICATION The Application instance this Controller is attached to.
-         */
-        ROOT_APPLICATION: null,
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
+	    logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController"),
 
         /**
-         * The logger for the object.
+         * @property {Ext.app.Application} ROOT_APPLICATION The Application instance this Controller is attached to.
+         * @static
          */
-        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController")
+        ROOT_APPLICATION: null
     },
 
     config: {
@@ -952,11 +972,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * in via a reference to the service object, the actual service method, and the service method's parameters.
      * This is done to prevent the service call from being executed before the responder is being set on it.
      *
-     * ## Example
-     *
-     * var service = this.getAuthenticationService();
-     * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
-     *
      * @param {Object} service Reference to the actual service.
      * @param {Function} method Reference to the method on the service object that executes the service call.
      * @param {Array} args Array of parameters used in the service call's method.
@@ -987,11 +1002,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 	 * in via a reference to the service object, the actual service method, and the service method's parameters.
 	 * This is done to prevent the service call from being executed before the responder is being set on it.
 	 *
-	 * ## Example
-	 *
-	 * var service = this.getAuthenticationService();
-	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
-	 *
 	 * @param {Object} service Reference to the actual service.
 	 * @param {Function} method Reference to the method on the service object that executes the service call.
 	 * @param {Array} args Array of parameters used in the service call's method.
@@ -1015,11 +1025,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
 	 * in via a reference to the service object, the actual service method, and the service method's parameters.
 	 * This is done to prevent the service call from being executed before the responder is being set on it.
-	 *
-	 * ## Example
-	 *
-	 * var service = this.getAuthenticationService();
-	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
 	 *
 	 * @param {Object} service Reference to the actual service.
 	 * @param {Function} method Reference to the method on the service object that executes the service call.
@@ -1126,16 +1131,17 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.mediator.AbstractMediator")
     },
 
 	inject: {
 
 		/**
-		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 * @property {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
 		 */
 		eventBus: "eventBus"
 	},
@@ -1283,13 +1289,16 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
     ],
 
     statics: {
-        /**
-         * The logger for the object.
-         */
+
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.AbstractService"),
 
         /**
-         * Error message for no responder defined.
+         * @property {String} NO_RESPONDER_DEFINED Error message for no responder defined.
+         * @static
          */
         NO_RESPONDER_DEFINED:
             "You must provide a responder object to the service that contains either a custom defined " +
@@ -1436,13 +1445,15 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.mock.AbstractServiceMock"),
 
         /**
-         * {Number} DELAY_IN_MILLISECONDS The default delay of 3 seconds for mock services.
+         * @property {Number} DELAY_IN_MILLISECONDS The default delay of 3 seconds for mock services.
+         * @static
          */
         DELAY_IN_MILLISECONDS: 3000
     },
@@ -1563,27 +1574,31 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore"),
 
         /**
-         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+         * @property {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
          * cannot be anything other than null or an array.
+         * @static
          */
         ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter must be an array or null.",
 
         /**
-         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+         * @property {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
          * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         * @static
          */
         ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
             "be an instance of the expected model for this store.",
 
 	    /**
-	     * {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
+	     * @property {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
 	     * method's parameter must be not-null and an instance of the expected model for this store.
+	     * @static
 	     */
 	    ERROR_SET_UPDATE_PARAM_NOT_VALID: "The update() method's 'record' parameter must be not null and " +
 		    "be an instance of the expected model for this store."

@@ -17,11 +17,7 @@
 
 /**
  * The main purpose of this class is to provide loosely coupled object communication by wrapping
- * the application-level event bus using simple, helper methods for adding, removing, and dispatching events:
- *
- * addGlobalEventListener(type, handler, scope)
- * dispatchGlobalEvent(event, args)
- * removeGlobalEventListener()
+ * the application-level event bus using simple, helper methods for adding, removing, and dispatching events.
  */
 Ext.define("FlowMVC.mvc.event.EventDispatcher", {
     extend: "Ext.util.Observable",
@@ -29,7 +25,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
 	statics: {
 
 		/**
-		 * The logger for the object.
+		 * @property {FlowMVC.logger.Logger} logger The logger for the object.
+		 * @static
 		 */
 		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.event.EventDispatcher")
 	},
@@ -41,8 +38,9 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * var evt = Ext.create("CafeTownsend.event.AuthenticationEvent", CafeTownsend.event.AuthenticationEvent.LOGIN, username, password);
-     * this.dispatchGlobalEvent(evt);
+     *      @exampleTODO preview
+     *      var evt = Ext.create("CafeTownsend.event.AuthenticationEvent", CafeTownsend.event.AuthenticationEvent.LOGIN, username, password);
+     *      this.dispatchGlobalEvent(evt);
      *
      * @param {FlowMVC.mvc.event.AbstractEvent/Object/String} event The event object to fire containing
      * a property called 'type' or a string representing the event name or type.
@@ -69,7 +67,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * this.addGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
+     *      @exampleTODO preview
+     *      this.addGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
      *
      * @param {String/String[]/Object} type The name or type of the event to listen for. May also be an object who's property names are
      * event names. If the event being dispatched extends FlowMVC.mvc.event.AbstractEvent, the types for the event
@@ -93,7 +92,8 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
      *
      * ## Example
      *
-     * this.removeGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
+     *      @exampleTODO preview
+     *      this.removeGlobalEventListener(CafeTownsend.event.AuthenticationEvent.LOGIN, this.onLogin, this);
      *
      * @param {String/String[]/Object} type The name or type of the event to listen for. May also be an object who's property names are
      * event names. If the event being dispatched extends FlowMVC.mvc.event.AbstractEvent, the types for the event

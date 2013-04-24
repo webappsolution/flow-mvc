@@ -67,13 +67,16 @@ Ext.define(&quot;FlowMVC.mvc.service.AbstractService&quot;, {
     ],
 
     statics: {
-<span id='FlowMVC-mvc-service-AbstractService-property-logger'>        /**
-</span>         * The logger for the object.
-         */
+
+<span id='FlowMVC-mvc-service-AbstractService-static-property-logger'>	    /**
+</span>	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.service.AbstractService&quot;),
 
-<span id='FlowMVC-mvc-service-AbstractService-property-NO_RESPONDER_DEFINED'>        /**
-</span>         * Error message for no responder defined.
+<span id='FlowMVC-mvc-service-AbstractService-static-property-NO_RESPONDER_DEFINED'>        /**
+</span>         * @property {String} NO_RESPONDER_DEFINED Error message for no responder defined.
+         * @static
          */
         NO_RESPONDER_DEFINED:
             &quot;You must provide a responder object to the service that contains either a custom defined &quot; +

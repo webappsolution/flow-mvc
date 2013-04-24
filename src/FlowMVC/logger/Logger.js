@@ -19,7 +19,7 @@
  * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
  * of bells and whistles; simply put, this logger offers console logging as the only target, no filtering by context
  * or leg-level, and a fixed output that's not configurable. There are many other logging libraries that support this
- * type of advanced logging support: log4javascript http://log4javascript.org/, log4js-ext https://code.google.com/p/log4js-ext/
+ * type of advanced logging support: [log4javascript](http://log4javascript.org/), [log4js-ext](https://code.google.com/p/log4js-ext/)
  * and so on.
  *
  * The logger provides a simple wrapper to the console but with some added benefits like checking for console
@@ -47,37 +47,44 @@ Ext.define("FlowMVC.logger.Logger", {
 	statics: {
 
 		/**
-		 * {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 * @property {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 * @static
 		 */
 		isEnabled: true,
 
 		/**
-		 * {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 * @property {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 * @static
 		 */
 		LEVEL_LOG: "LOG",
 
 		/**
-		 * {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 * @property {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
+		 * @static
 		 */
 		LEVEL_DEBUG: "DEBUG",
 
 		/**
-		 * {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 * @property {String} LEVEL_INFO A constant. Indicates the "info" logging level.
+		 * @static
 		 */
 		LEVEL_INFO: "INFO",
 
 		/**
-		 * {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 * @property {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
+		 * @static
 		 */
 		LEVEL_WARN: "WARN",
 
 		/**
-		 * {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 * @property {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
+		 * @static
 		 */
 		LEVEL_ERROR: "ERROR",
 
 		/**
-		 * {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 * @property {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
+		 * @static
 		 */
 		LEVEL_FATAL: "FATAL",
 
@@ -89,6 +96,7 @@ Ext.define("FlowMVC.logger.Logger", {
 		 * @param {String} context The string name used for the logger. This is often the class name of the object the
 		 * logger is used in.
 		 * @returns {FlowMVC.logger.Logger} A FlowMVC logger.
+		 * @static
 		 */
 		getLogger: function(context) {
 			var logger;
@@ -114,7 +122,8 @@ Ext.define("FlowMVC.logger.Logger", {
 		 * The use of the singleton property of the returned object ensures that the logger is unique and created
 		 * for each injection, again allowing the logger to gain a reference to the instance it's injected into.
 		 *
-		 * @returns {{fn: Function, singleton: boolean}}
+		 * @returns {{fn: Function, singleton: Boolean}}
+		 * @static
 		 */
 		getInjectableLogger: function() {
 
@@ -131,7 +140,8 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
-	 * {String} context String name to be used when logging; typically this is the client object's fully-qualified name.
+	 * @property {String} context String name to be used when logging; typically this is the client object's
+	 * fully-qualified name.
 	 */
 	context: null,
 

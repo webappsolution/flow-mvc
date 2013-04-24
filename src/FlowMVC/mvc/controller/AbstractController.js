@@ -28,7 +28,8 @@
  *
  * ## Example
  *
- * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
+ *      @exampleTODO preview
+ *      this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
  * 
  * Finally, controllers can be used to handle application-level processes and logic as they are in fact application
  * aware and often "control" the flow and orchestration of the application.
@@ -40,28 +41,27 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 		"FlowMVC.mvc.event.EventDispatcher"
 	],
 
-//	inject: [
-//		"eventBus"
-//	],
 	inject: {
 
 		/**
-		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+		 * @property {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
 		 */
 		eventBus: "eventBus"
 	},
 
     statics: {
 
-        /**
-         * {Ext.app.Application} ROOT_APPLICATION The Application instance this Controller is attached to.
-         */
-        ROOT_APPLICATION: null,
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
+	    logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController"),
 
         /**
-         * The logger for the object.
+         * @property {Ext.app.Application} ROOT_APPLICATION The Application instance this Controller is attached to.
+         * @static
          */
-        logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.controller.AbstractController")
+        ROOT_APPLICATION: null
     },
 
     config: {
@@ -104,11 +104,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
      * in via a reference to the service object, the actual service method, and the service method's parameters.
      * This is done to prevent the service call from being executed before the responder is being set on it.
      *
-     * ## Example
-     *
-     * var service = this.getAuthenticationService();
-     * this.executeServiceCall(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
-     *
      * @param {Object} service Reference to the actual service.
      * @param {Function} method Reference to the method on the service object that executes the service call.
      * @param {Array} args Array of parameters used in the service call's method.
@@ -139,11 +134,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 	 * in via a reference to the service object, the actual service method, and the service method's parameters.
 	 * This is done to prevent the service call from being executed before the responder is being set on it.
 	 *
-	 * ## Example
-	 *
-	 * var service = this.getAuthenticationService();
-	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
-	 *
 	 * @param {Object} service Reference to the actual service.
 	 * @param {Function} method Reference to the method on the service object that executes the service call.
 	 * @param {Array} args Array of parameters used in the service call's method.
@@ -167,11 +157,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 	 * Note that the service call isn't passed in as a function that actually executes the service; it's passed
 	 * in via a reference to the service object, the actual service method, and the service method's parameters.
 	 * This is done to prevent the service call from being executed before the responder is being set on it.
-	 *
-	 * ## Example
-	 *
-	 * var service = this.getAuthenticationService();
-	 * this.executeServiceCallWithAsyncToken(service, service.authenticate, [username, password], this.loginSuccess, this.loginFailure, this);
 	 *
 	 * @param {Object} service Reference to the actual service.
 	 * @param {Function} method Reference to the method on the service object that executes the service call.

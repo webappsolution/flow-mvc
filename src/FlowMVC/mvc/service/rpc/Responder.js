@@ -23,40 +23,46 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.Responder"),
 
         /**
-         * {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
+         * @property {String} ERROR_SUCCESS_MUST_BE_VALID_FUNCTION An error string indicating that the constructor success parameter
          * cannot be be null or an not a function.
+         * @static
          */
         ERROR_SUCCESS_MUST_BE_VALID_FUNCTION: "The constructor parameter 'success' cannot be null or not a function.",
+
         /**
-         * {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
+         * @property {String} ERROR_FAILURE_MUST_BE_VALID_FUNCTION An error string indicating that the constructor failure parameter
          * cannot be be null or an not a function.
+         * @static
          */
         ERROR_FAILURE_MUST_BE_VALID_FUNCTION: "The constructor parameter 'failure' cannot be null or not a function.",
+
         /**
-         * {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
+         * @property {String} ERROR_SCOPE_MUST_BE_NON_NULL An error string indicating that the constructor scope parameter
          * cannot be be null.
+         * @static
          */
         ERROR_SCOPE_MUST_BE_VALID_OBJECT: "The constructor parameter 'scope' cannot be null or not an object"
     },
 
 	/**
-	 * {Function} success Reference to a method that handles a successful service.
+	 * @property {Function} success Reference to a method that handles a successful service.
 	 */
 	success:    null,
 
 	/**
-	 * Function} failure Reference to a method that handles a failed service.
+	 * @property {Function} failure Reference to a method that handles a failed service.
 	 */
 	failure:    null,
 
 	/**
-	 * {Object} scope Reference to the object that has the success and failure handler methods.
+	 * @property {Object} scope Reference to the object that has the success and failure handler methods.
 	 */
 	scope:      null,
 

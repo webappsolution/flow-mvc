@@ -40,26 +40,28 @@ Ext.define(&quot;FlowMVC.mvc.event.AbstractEvent&quot;, {
 
     statics: {
 
-<span id='FlowMVC-mvc-event-AbstractEvent-property-logger'>        /**
-</span>         * The logger for the object.
-         */
+<span id='FlowMVC-mvc-event-AbstractEvent-static-property-logger'>	    /**
+</span>	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.event.AbstractEvent&quot;),
 
-<span id='FlowMVC-mvc-event-AbstractEvent-property-ERROR_TYPE_MUST_BE_VALID_STRING'>        /**
-</span>         * {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
+<span id='FlowMVC-mvc-event-AbstractEvent-static-property-ERROR_TYPE_MUST_BE_VALID_STRING'>        /**
+</span>         * @property {String} ERROR_TYPE_MUST_BE_VALID_STRING An error string indicating that the constructor type parameter
          * cannot be be null or an empty string.
+         * @static
          */
         ERROR_TYPE_MUST_BE_VALID_STRING: &quot;The constructor parameter 'type' cannot be null or an empty string.&quot;
     },
 
 <span id='FlowMVC-mvc-event-AbstractEvent-property-type'>    /**
-</span>     * {String} type The event type or string name of the event; this is the token client objects subscribe to
+</span>     * @property {String} type The event type or string name of the event; this is the token client objects subscribe to
      * when listening for application-level events.
      */
     type: &quot;&quot;,
 
 <span id='FlowMVC-mvc-event-AbstractEvent-property-data'>    /**
-</span>     * {Object} data A generic data property for any event.
+</span>     * @property {Object} data A generic data property for any event.
      */
     data: null,
 

@@ -26,27 +26,31 @@ Ext.define("FlowMVC.mvc.store.AbstractStore", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.store.AbstractStore"),
 
         /**
-         * {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
+         * @property {String} ERROR_SET_DATA_PARAM_NOT_VALID An error string indicating that the setData() method's parameter
          * cannot be anything other than null or an array.
+         * @static
          */
         ERROR_SET_DATA_PARAM_NOT_VALID: "The setData() method's 'data' parameter must be an array or null.",
 
         /**
-         * {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
+         * @property {String} ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID An error string indicating that the setSelectedRecord()
          * method's parameter cannot be anything other than null or an instance of the expected model for this store.
+         * @static
          */
         ERROR_SET_SELECTED_RECORD_PARAM_NOT_VALID: "The setSelectedRecord() method's 'record' parameter must null or " +
             "be an instance of the expected model for this store.",
 
 	    /**
-	     * {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
+	     * @property {String} ERROR_SET_UPDATE_PARAM_NOT_VALID An error string indicating that the update()
 	     * method's parameter must be not-null and an instance of the expected model for this store.
+	     * @static
 	     */
 	    ERROR_SET_UPDATE_PARAM_NOT_VALID: "The update() method's 'record' parameter must be not null and " +
 		    "be an instance of the expected model for this store."

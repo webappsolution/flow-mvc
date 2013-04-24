@@ -23,13 +23,15 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
 
     statics: {
 
-        /**
-         * The logger for the object.
-         */
+	    /**
+	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.mock.AbstractServiceMock"),
 
         /**
-         * {Number} DELAY_IN_MILLISECONDS The default delay of 3 seconds for mock services.
+         * @property {Number} DELAY_IN_MILLISECONDS The default delay of 3 seconds for mock services.
+         * @static
          */
         DELAY_IN_MILLISECONDS: 3000
     },

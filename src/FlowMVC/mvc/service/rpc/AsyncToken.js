@@ -29,18 +29,19 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 	statics: {
 
 		/**
-		 * The logger for the object.
+		 * @property {FlowMVC.logger.Logger} logger The logger for the object.
+		 * @static
 		 */
 		logger: FlowMVC.logger.Logger.getLogger("FlowMVC.mvc.service.rpc.AsyncToken")
 	},
 
     /**
-     * {String} id The unique ID of the token.
+     * @property {String} id The unique ID of the token.
      */
     id: null,
 
     /**
-     * {FlowMVC.mvc.service.rpc.Responder/Object} responder The object that contains success and failure methods
+     * @property {FlowMVC.mvc.service.rpc.Responder/Object} responder The object that contains success and failure methods
      * used for asynchronous service callbacks.
      */
     responder: null,

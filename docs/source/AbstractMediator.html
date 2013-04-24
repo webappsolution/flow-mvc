@@ -51,16 +51,17 @@ Ext.define(&quot;FlowMVC.mvc.mediator.AbstractMediator&quot;, {
 
     statics: {
 
-<span id='FlowMVC-mvc-mediator-AbstractMediator-property-logger'>        /**
-</span>         * The logger for the object.
-         */
+<span id='FlowMVC-mvc-mediator-AbstractMediator-static-property-logger'>	    /**
+</span>	     * @property {FlowMVC.logger.Logger} logger The logger for the object.
+	     * @static
+	     */
         logger: FlowMVC.logger.Logger.getLogger(&quot;FlowMVC.mvc.mediator.AbstractMediator&quot;)
     },
 
 <span id='FlowMVC-mvc-mediator-AbstractMediator-property-inject'>	inject: {
 </span>
 <span id='FlowMVC-mvc-mediator-AbstractMediator-property-eventBus'>		/**
-</span>		 * {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
+</span>		 * @property {FlowMVC.mvc.event.EventDispatcher} eventBus Reference to the application-level event bus.
 		 */
 		eventBus: &quot;eventBus&quot;
 	},
