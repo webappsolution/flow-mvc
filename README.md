@@ -27,12 +27,12 @@ you run little risk by not testing the view." [Fowler](http://martinfowler.com/e
 Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/WebAppSolutionInc/flow-mvc/wiki).
 
 *  [Consistant Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
-*  [Flex like Model-View-Controller-Service](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS)
-*  [Flex like Dependency injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
-*  [Flex like Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
-*  [Flex like HTTP Data Services and Mocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Data-Services-And-Mocks)
-*  [Flex like implementation of Passive View using Mediators](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators)
-*  [FlexUnit like tests using Jasmine for both functional and asynchronous code blocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests)
+*  [Model-View-Controller-Service](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS-Architecture)
+*  [Dependency injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
+*  [Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
+*  [HTTP Data Services and Mocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Data-Services-And-Mocks)
+*  [Implementation of Passive View using Mediators](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators)
+*  [Jasmine Unit Tests for both functional and asynchronous code blocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests)
 *  [Reuse of code between ExtJS and Touch versions](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code)
 *  [AsDoc like JSDuck Documentation](https://github.com/senchalabs/jsduck)
 *  [FlowMVC API Docs](http://www.webappsolution.com)
