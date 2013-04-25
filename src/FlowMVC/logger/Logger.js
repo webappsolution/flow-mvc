@@ -99,8 +99,6 @@ Ext.define("FlowMVC.logger.Logger", {
 		 * @static
 		 */
 		getLogger: function(context) {
-			var logger;
-
 			if(!Ext.isString(context)) {
 				context = Ext.getClassName(context);
 			}
