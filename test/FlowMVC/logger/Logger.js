@@ -50,7 +50,7 @@ describe("FlowMVC.logger.Logger", function() {
 
 	it("should log acceptable filter", function() {
 
-		var FlowMVCFilter = "FlowMVC.l";
+		var FlowMVCFilter = "FlowMVC";
 
 		FlowMVC.logger.Logger.setLevel(FlowMVC.logger.Logger.LEVEL_ALL);
 		var mockLogger = Ext.create("FlowMVC.logger.MockLogger");
