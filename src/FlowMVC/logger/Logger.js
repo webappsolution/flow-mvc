@@ -17,8 +17,8 @@
 
 /**
  * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
- * of bells and whistles; simply put, this logger offers console logging as the only target, no filtering by context
- * or leg-level, and a fixed output that's not configurable. There are many other logging libraries that support this
+ * of bells and whistles; simply put, this logger offers console logging as the only target, filtering by context
+ * and leg-level, and a fixed output that's non-configurable. There are many other logging libraries that support this
  * type of advanced logging support: [log4javascript](http://log4javascript.org/), [log4js-ext](https://code.google.com/p/log4js-ext/)
  * and so on.
  *
@@ -39,8 +39,6 @@
  * OR with JSON:
  *
  * logger.debug("execute: name = {name}, last = {foo.bar}", { first:"john doe", foo: { bar:"foo-bar" } });
- *
- * The logger does not currently allow you to edit the formatted output or filter by log level or category.
  */
 Ext.define("FlowMVC.logger.Logger", {
 
@@ -53,40 +51,58 @@ Ext.define("FlowMVC.logger.Logger", {
 		isEnabled: true,
 
 		/**
+		 * @property {Object} filters An associative array or hash of all the logging filters.
+		 * @static
+		 */
+		filters: null,
+
+		/**
+		 * @property {Boolean} isEnabled Global flag indicating if logging is enabled.
+		 * @static
+		 */
+		level: 0,
+
+		/**
 		 * @property {String} LEVEL_LOG A constant. Indicates the "log" logging level.
 		 * @static
 		 */
-		LEVEL_LOG: "LOG",
+		LEVEL_ALL: 0,
+
+		/**
+		 * @property {String} LEVEL_LOG A constant. Indicates the "log" logging level.
+		 * @static
+		 */
+		LEVEL_LOG: 2,
 
 		/**
 		 * @property {String} LEVEL_DEBUG A constant. Indicates the "debug" logging level.
 		 * @static
 		 */
-		LEVEL_DEBUG: "DEBUG",
+		LEVEL_DEBUG: 4,
 
 		/**
 		 * @property {String} LEVEL_INFO A constant. Indicates the "info" logging level.
 		 * @static
 		 */
-		LEVEL_INFO: "INFO",
+		LEVEL_INFO: 6,
 
 		/**
 		 * @property {String} LEVEL_WARN A constant. Indicates the "warn" logging level.
 		 * @static
 		 */
-		LEVEL_WARN: "WARN",
+		LEVEL_WARN: 8,
 
 		/**
 		 * @property {String} LEVEL_ERROR A constant. Indicates the "error" logging level.
 		 * @static
 		 */
-		LEVEL_ERROR: "ERROR",
+		LEVEL_ERROR: 10,
 
 		/**
 		 * @property {String} LEVEL_FATAL A constant. Indicates the "fatal" logging level.
 		 * @static
 		 */
-		LEVEL_FATAL: "FATAL",
+		LEVEL_FATAL: 1000,
 
 		/**
 		 * Creates a logger that outputs the following format:
@@ -108,6 +124,41 @@ Ext.define("FlowMVC.logger.Logger", {
 			}
 
 			return Ext.create("FlowMVC.logger.Logger", context);
+		},
+
+		/**
+		 * Adds an acceptable filter to the list of log statements that are acceptable.
+		 *
+		 * @param {String} filter The filter to add.
+		 * @static
+		 */
+		addFilter: function(filter) {
+			if(FlowMVC.logger.Logger.filters == null) {
+				FlowMVC.logger.Logger.filters = {};
+			}
+			FlowMVC.logger.Logger.filters[filter] = filter;
+		},
+
+		/**
+		 * Removes a filter from the list of log statements that are acceptable.
+		 *
+		 * @param {String} filter The filter to remove.
+		 * @static
+		 */
+		removeFilter: function(filter) {
+			if(FlowMVC.logger.Logger.filters != null) {
+				delete FlowMVC.logger.Logger.filters[filter];
+			}
+		},
+
+		/**
+		 * Sets the log level. Only allows logging to the console >= the current level set.
+		 *
+		 * @param {Number} level The log level.
+		 * @static
+		 */
+		setLevel: function(level) {
+			FlowMVC.logger.Logger.level = level;
 		},
 
 		/**
@@ -254,6 +305,36 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
+	 * A simple method that returns the log level as a printable string.
+	 *
+	 * @param {Number} level The log level.
+	 * @returns {String} The printable log level message.
+	 */
+	getPrintableLogMessage: function(level) {
+		switch(level)
+		{
+			case FlowMVC.logger.Logger.LEVEL_DEBUG:
+				return "[DEBUG]";
+
+			case FlowMVC.logger.Logger.LEVEL_INFO:
+				return "[INFO] ";
+
+			case FlowMVC.logger.Logger.LEVEL_WARN:
+				return "[WARN] ";
+
+			case FlowMVC.logger.Logger.LEVEL_ERROR:
+				return "[ERROR]";
+
+			case FlowMVC.logger.Logger.LEVEL_FATAL:
+				return "[FATAL]";
+
+			case FlowMVC.logger.Logger.LEVEL_LOG:
+			default:
+				return "[LOG]  ";
+		}
+	},
+
+	/**
 	 * Creates a print-friendly context in the form of
 	 * 16:11:45:956 DEBUG [CafeTownsend.controller.AuthenticationController] - login: username = {a}, password = {b}
 	 * for logging purposes, where {a} and {b} are tokenized parameters passed into the logging method.
@@ -262,7 +343,8 @@ Ext.define("FlowMVC.logger.Logger", {
 	 * - login: username = {a}, password = {b}.
 	 */
 	getPrintFriendlyLogStatement: function(level, msg) {
-		return this.getTimestamp() + " " + level + "\t" + "[" + this.context + "]" + " - " + msg;
+		msg = (msg == "undefined") || (msg == null) ? "" : msg;
+		return this.getTimestamp() + " " + this.getPrintableLogMessage(level) + " " + this.context + " - " + msg;
 	},
 
 	/**
@@ -327,6 +409,35 @@ Ext.define("FlowMVC.logger.Logger", {
 	},
 
 	/**
+	 * Determines if the log message contains a context that matches one of the acceptable log filters.
+	 *
+	 * @param {String} msg The entire log message to search for a matching filter.
+	 * @returns {Boolean} A flag indicating if the message contains an acceptable log filter.
+	 */
+	isFilterEnabled: function(msg) {
+		var filterRef = FlowMVC.logger.Logger.filters;
+		if(filterRef == null) {
+			filterRef = {};
+			filterRef["*"] = "*";
+		}
+		if(filterRef["*"] != null) {
+			return true;
+		}
+
+		for(var filter in filterRef) {
+			var lastChar = filter.charAt(filter.length-1);
+			if(lastChar == "*") {
+				filter = filter.slice(0, -1);
+			}
+			if(msg.indexOf(filter) != -1) {
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+	/**
 	 * @private Determines the log level and logs to the console accordingly. Can take tokenized log messages and substitute
 	 * values passed into the logging method.
 	 *
@@ -341,8 +452,18 @@ Ext.define("FlowMVC.logger.Logger", {
 			return;
 		}
 
+		// determine if the level requested is greater or equal to the current log level
+		if(level < FlowMVC.logger.Logger.level) {
+			return;
+		}
+
 		// get the console print friendly message
 		var msg = this.getPrintFriendlyLogStatement(level, args[0]);
+
+		// filter out the acceptable logging statements so it only shows contexts that exist in the filter list
+		if(!this.isFilterEnabled(msg)) {
+			return;
+		}
 
 		// determine if the message has parametrized tokens
 		if(args && (args.length >= 2)) {
@@ -350,48 +471,52 @@ Ext.define("FlowMVC.logger.Logger", {
 		}
 
 		// determine the log level and log to the console accordingly
-		// TODO: Might want to consider using Ext.Logger() or something that handles console logging with IE
 		switch (level) {
 			case FlowMVC.logger.Logger.LEVEL_INFO:
-				try {
-					if(window.console && console.info && Ext.isFunction(console.info)) {
-						console.info(msg);
-					}
-				} catch (e) {
-				}
+				this.logToConsole("info", msg);
 				break;
 
 			case FlowMVC.logger.Logger.LEVEL_WARN:
-				try {
-					if(window.console && console.warn && Ext.isFunction(console.warn)) {
-						console.warn(msg);
-					}
-				} catch (e) {
-				}
+				this.logToConsole("warn", msg);
 				break;
 
 			case FlowMVC.logger.Logger.LEVEL_ERROR:
 			case FlowMVC.logger.Logger.LEVEL_FATAL:
-				try {
-					if(window.console && console.error && Ext.isFunction(console.error)) {
-						console.error(msg);
-					}
-				} catch (e) {
-				}
+				this.logToConsole("error", msg);
 				break;
 
 			case FlowMVC.logger.Logger.LEVEL_LOG:
 			case FlowMVC.logger.Logger.LEVEL_DEBUG:
 			default:
-				try {
-					if(window.console && console.debug && Ext.isFunction(console.debug)) {
-						console.debug(msg);
-					}
-				} catch (e) {
-				}
+				this.logToConsole("debug", msg);
 				break;
 		}
 
+	},
+
+	/**
+	 * @private Internal method that determines if the console logging method is available -- if so, print to the console.
+	 *
+	 * @param {Function} method The request console logging method.
+	 * @param {String} msg The message to log to the console.
+	 */
+	logToConsole: function(method, msg) {
+		try {
+			if(this.isConsoleMethodAvailable(method)) {
+				console[method](msg);
+			}
+		} catch (e) {
+		}
+	},
+
+	/**
+	 * @private Determines if the requested console logging method is available, since it is not with IE.
+	 *
+	 * @param {Function} method The request console logging method.
+	 * @returns {Boolean} Indicates if the console logging method is available.
+	 */
+	isConsoleMethodAvailable: function(method) {
+		return window.console && console[method] && Ext.isFunction(console[method]);
 	}
 
 });

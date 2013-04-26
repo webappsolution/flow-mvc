@@ -27,7 +27,10 @@ Ext.define("FlowMVC.logger.MockLogger", {
 	log: function() {
 		FlowMVC.logger.MockLogger.logger.log("log {0} and name = {1}", ["[BMR 0]", "[BMR 1]"]);
 
-		var logMessage = "User {user.username} successfully logged in with password '{user.password}' and has a session ID = {sessionID}.";
+		var logMessage = "" +
+			"User '{user.username}' successfully logged in with " +
+			"password '{user.password}' and has a " +
+			"session ID = '{sessionID}'.";
 
 		var jsonToken = {
 			user: {
@@ -58,5 +61,13 @@ Ext.define("FlowMVC.logger.MockLogger", {
 
 	fatal: function() {
 		FlowMVC.logger.MockLogger.logger.fatal("fatal");
+	},
+
+	newLogLine: function(msg) {
+		( (msg == null) || (msg == "undefined") ) ? "" : msg;
+		FlowMVC.logger.MockLogger.logger.fatal("\n" +
+			"-------------------------------------------------------------------------------------------\n" +
+			"END " + msg + "\n" +
+			"-------------------------------------------------------------------------------------------");
 	}
 });
