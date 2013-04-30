@@ -14,7 +14,7 @@ structure, documentation, testability, localization, and re-use of resources, bo
 
 **FlowMVC works with ExtJS version 4.1 and up, Sencha Touch version 2.0 and up, and DeftJS version 0.8.0 and up.**
 
-## Hightlights
+## Highlights
 
 * FlowMVC uses a Global Event Bus for communications and it's built into the framework.
 * FlowMVC separates View Controllers from Service Controllers -- we strictly separate Mediators (that own views) from Service Controllers (that own services). Controllers "control flow" of the app -- they orchestrate the app flow with events. They do not control views and work with services at the same time.
