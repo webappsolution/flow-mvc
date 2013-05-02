@@ -22,7 +22,8 @@ structure, documentation, testability, localization, and re-use of resources, bo
 ## Highlights
 
 * FlowMVC uses a Global Event Bus for loosely coupled object communication.
-* FlowMVC separates View Controllers from Service Controllers -- we strictly separate Mediators (that own views) from Service Controllers (that own services). Controllers "control flow" of the app -- they orchestrate the app flow with events. They do not control views and work with services at the same time.
+* FlowMVC separates Mediators from Service Controllers -- it strictly separates Mediators 
+(View Controllers that own views) from Service Controllers (that own services).
 * FlowMVC has Service Objects separating server side logic into it's own layer.
 * FlowMVC has Mock Service Objects with delays built-in for async service stubbing.
 * FlowMVC looks and feels like a robust OO client using traditional MVC architecture and IoC frameworks.
