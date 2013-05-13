@@ -2,25 +2,8 @@
 FlowMVC 0.1.0
 
 Copyright (c) 2013 [Web App Solution, Inc.](http://webappsolution.com)
-Open source under the [GNU General Public License](http://www.gnu.org/licenses).
+Open source under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
 */
-
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
  * This is a simple, one-class logger that attempts to do the bare minimum required for logging without a ton
@@ -527,23 +510,6 @@ Ext.define("FlowMVC.logger.Logger", {
 	}
 
 });
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * Contains utilities to create unique IDs.
  */
@@ -591,23 +557,6 @@ Ext.define("FlowMVC.util.UIDUtil", {
         }
     }
 });
-
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
  * The main purpose of this class is to provide loosely coupled object communication by wrapping
@@ -704,23 +653,6 @@ Ext.define("FlowMVC.mvc.event.EventDispatcher", {
 
 });
 
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * The base event used for all application-level event bus messaging; the type property defines the event name
  * or type that drives the event dispatching.
@@ -771,24 +703,7 @@ Ext.define("FlowMVC.mvc.event.AbstractEvent", {
         FlowMVC.mvc.event.AbstractEvent.logger.debug("AbstractEvent.Constructor: type = {type}", { type:type });
         this.type = type;
     }
-});/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
+});/**
  * Contains a reference to a {FlowMVC.mvc.service.rpc.Responder}, an object making an asynchronous service call. The
  * AsyncToken then appliers the success and failure callback methods to the service by inspecting and using the
  * methods defined in the Responder object.
@@ -887,23 +802,6 @@ Ext.define("FlowMVC.mvc.service.rpc.AsyncToken", {
 
 });
 
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * Contains references to the success and failure methods of an object making a service call.
  * It also contains a reference to the object using the Responder (which has the success and failure methods).
@@ -988,23 +886,6 @@ Ext.define("FlowMVC.mvc.service.rpc.Responder", {
     }
 
 });
-
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
  * Controllers act as the front door to services; they handle application-level events and execute the appropriate
@@ -1218,23 +1099,6 @@ Ext.define("FlowMVC.mvc.controller.AbstractController", {
 
 });
 
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * Mediators fulfil the passive view pattern and are entirely responsible for a single view and it's sub-components;
  * it is within a mediator that we handle view logic, events and user interactions, and data marshaling. It is expected
@@ -1359,23 +1223,6 @@ Ext.define("FlowMVC.mvc.mediator.AbstractMediator", {
     }
 
 });
-
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
  * The base class for services. Provides some helper methods for calling the successful and failed callbacks
@@ -1543,23 +1390,6 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
     }
 });
 
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * The base class for mock services adds a delay to the mock asynchronous network call in milliseconds.
  */
@@ -1668,23 +1498,6 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 });
-
-/*
- Copyright (c) 2013 [Web App Solution, Inc.](mailto:admin@webappsolution.com)
-
- FlowMVC is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- FlowMVC is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with FlowMVC.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
  * The abstract store classes provides additional base functionality to update records in the store and
