@@ -43,7 +43,7 @@ Full documentation on the features and usage of DeftJS is available in the [Wiki
 *  [Reuse of code between ExtJS and Touch versions](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code)
 *  [FlowMVC API Docs](http://webappsolutioninc.github.io/flow-mvc/docs/)
 *  [Resources](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources)
-*  [License: GNU General Public License](http://webappsolutioninc.github.io/flow-mvc/LICENSE)
+*  [License: MIT License](http://webappsolutioninc.github.io/flow-mvc/MIT-LICENSE.txt)
 
 ## Examples
 
