@@ -172,7 +172,7 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
 	 * Promise
 	 */
 	getTokenOrPromise: function() {
-		FlowMVC.mvc.service.mock.AbstractService.logger.debug("getTokenOrPromise");
+		FlowMVC.mvc.service.AbstractService.logger.debug("getTokenOrPromise");
 		return (this.getUsePromise()) ?
 			Ext.create("Deft.promise.Deferred") :
 			Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
