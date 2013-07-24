@@ -142,6 +142,8 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
         } else {
             this.applyResponderMethod(response, "success");
         }
+
+	    return token;
     },
 
     /**
@@ -157,10 +159,23 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
         if(token && (token instanceof FlowMVC.mvc.service.rpc.AsyncToken)) {
             token.applyFailure(response);
         } else if(token && (token instanceof Deft.promise.Deferred)) {
-            deferred.reject("There was a service error.");
+	        token.reject("There was a service error.");
         } else {
             this.applyResponderMethod(response, "failure");
         }
-    }
+    },
+
+	/**
+	 * Accessor method that determines if this service uses promises or AsyncTokens.
+	 *
+	 * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
+	 * Promise
+	 */
+	getTokenOrPromise: function() {
+		FlowMVC.mvc.service.mock.AbstractService.logger.debug("getTokenOrPromise");
+		return (this.getUsePromise()) ?
+			Ext.create("Deft.promise.Deferred") :
+			Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
+	}
 });
 

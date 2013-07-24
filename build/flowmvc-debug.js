@@ -1368,6 +1368,8 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
         } else {
             this.applyResponderMethod(response, "success");
         }
+
+	    return token;
     },
 
     /**
@@ -1383,11 +1385,24 @@ Ext.define("FlowMVC.mvc.service.AbstractService", {
         if(token && (token instanceof FlowMVC.mvc.service.rpc.AsyncToken)) {
             token.applyFailure(response);
         } else if(token && (token instanceof Deft.promise.Deferred)) {
-            deferred.reject("There was a service error.");
+	        token.reject("There was a service error.");
         } else {
             this.applyResponderMethod(response, "failure");
         }
-    }
+    },
+
+	/**
+	 * Accessor method that determines if this service uses promises or AsyncTokens.
+	 *
+	 * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
+	 * Promise
+	 */
+	getTokenOrPromise: function() {
+		FlowMVC.mvc.service.mock.AbstractService.logger.debug("getTokenOrPromise");
+		return (this.getUsePromise()) ?
+			Ext.create("Deft.promise.Deferred") :
+			Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
+	}
 });
 
 /**
@@ -1423,8 +1438,6 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
 	    var token = this.getTokenOrPromise();
 	    var me = this;
 
-        // Using a delayed task in order to give the hide animation above
-        // time to finish before executing the next steps.
         var task = Ext.create("Ext.util.DelayedTask", function() {
             me.success(response, token);
         });
@@ -1447,8 +1460,6 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
 	    var token = this.getTokenOrPromise();
 	    var me = this;
 
-        // Using a delayed task in order to give the hide animation above
-        // time to finish before executing the next steps.
         var task = Ext.create("Ext.util.DelayedTask", function() {
             me.failure(response, token);
         });
@@ -1459,18 +1470,18 @@ Ext.define("FlowMVC.mvc.service.mock.AbstractServiceMock", {
         return (token.promise) ? token.promise : token;
     },
 
-    /**
-     * Accessor method that determines if this service uses promises or AsyncTokens.
-     *
-     * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
-     * Promise
-     */
-    getTokenOrPromise: function() {
-        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("getTokenOrPromise");
-        return (this.getUsePromise()) ?
-            Ext.create("Deft.promise.Deferred") :
-            Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
-    },
+//    /**
+//     * Accessor method that determines if this service uses promises or AsyncTokens.
+//     *
+//     * @returns {FlowMVC.mvc.service.rpc.AsyncToken/Deft.promise.Deferred} Reference to the AsyncToken or
+//     * Promise
+//     */
+//    getTokenOrPromise: function() {
+//        FlowMVC.mvc.service.mock.AbstractServiceMock.logger.debug("getTokenOrPromise");
+//        return (this.getUsePromise()) ?
+//            Ext.create("Deft.promise.Deferred") :
+//            Ext.create("FlowMVC.mvc.service.rpc.AsyncToken");
+//    },
 
     /**
      * Helper method used to get the number of milliseconds to delay the mock service callback.
