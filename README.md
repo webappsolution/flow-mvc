@@ -13,7 +13,7 @@ In addition, for enterprises looking to leverage intellectual capital across pla
 it provides an application structure with reusability and portability in mind encouraging the re-use of application and 
 business logic.
 
-For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend),
+For enterprises struggling with the myriad of choices available, FlowMVC and the tools used in the [Cafe Townsend Demo Project](https://github.com/webappsolution/sencha-cafe-townsend),
 provide a level of security for enterprise architects and managers that their goals, such as well defined project 
 structure, documentation, testability, localization, and re-use of resources, both human and IC, are met.
 
@@ -31,23 +31,23 @@ structure, documentation, testability, localization, and re-use of resources, bo
 
 ## Documentation Overview
 
-Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/WebAppSolutionInc/flow-mvc/wiki).
+Full documentation on the features and usage of DeftJS is available in the [Wiki](https://github.com/webappsolution/flow-mvc/wiki).
 
-*  [Consistent Project Structure](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Consistent-Project-Structure)
-*  [Model-View-Controller-Service Architecture](https://github.com/WebAppSolutionInc/flow-mvc/wiki/MVCS-Architecture)
-*  [Dependency Injection](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Dependency-Injection)
-*  [Event Bus](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Event-Bus)
-*  [HTTP Data Services and Mocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Data-Services-And-Mocks)
-*  [Implementation of Passive View using Mediators](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Passive-View-And-Mediators)
-*  [Jasmine Unit Tests for both functional and asynchronous code blocks](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Running-Unit-Tests)
-*  [Reuse of code between ExtJS and Touch versions](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Reusing-Sencha-Code)
-*  [FlowMVC API Docs](http://webappsolutioninc.github.io/flow-mvc/docs/)
-*  [Resources](https://github.com/WebAppSolutionInc/flow-mvc/wiki/Resources)
-*  [License: MIT License](http://webappsolutioninc.github.io/flow-mvc/MIT-LICENSE.txt)
+*  [Consistent Project Structure](https://github.com/webappsolution/flow-mvc/wiki/Consistent-Project-Structure)
+*  [Model-View-Controller-Service Architecture](https://github.com/webappsolution/flow-mvc/wiki/MVCS-Architecture)
+*  [Dependency Injection](https://github.com/webappsolution/flow-mvc/wiki/Dependency-Injection)
+*  [Event Bus](https://github.com/webappsolution/flow-mvc/wiki/Event-Bus)
+*  [HTTP Data Services and Mocks](https://github.com/webappsolution/flow-mvc/wiki/Data-Services-And-Mocks)
+*  [Implementation of Passive View using Mediators](https://github.com/webappsolution/flow-mvc/wiki/Passive-View-And-Mediators)
+*  [Jasmine Unit Tests for both functional and asynchronous code blocks](https://github.com/webappsolution/flow-mvc/wiki/Running-Unit-Tests)
+*  [Reuse of code between ExtJS and Touch versions](https://github.com/webappsolution/flow-mvc/wiki/Reusing-Sencha-Code)
+*  [FlowMVC API Docs](http://github.com/webappsolution/flow-mvc/docs/)
+*  [Resources](https://github.com/webappsolution/flow-mvc/wiki/Resources)
+*  [License: MIT License](http://github.com/webappsolution/flow-mvc/MIT-LICENSE.txt)
 
 ## Examples
 
-* [Cafe Townsend Demo Project](https://github.com/WebAppSolutionInc/sencha-cafe-townsend) - A HTML5 implementation 
+* [Cafe Townsend Demo Project](https://github.com/webappsolution/sencha-cafe-townsend) - A HTML5 implementation 
 using Sencha ExtJS, Sencha Touch, DeftJS, and FlowMVC.
 
 ## Pending Features
@@ -56,7 +56,7 @@ This effort is still ongoing with some in-progress work that will provide the fo
 
 *  Unit Tests with Jasmine - (In Progress @ 60%)
 
-FlowMVC is currently considered an Alpha release, so help us make it better by adding to the [Issues Page](https://github.com/WebAppSolutionInc/flow-mvc/issues) where 
+FlowMVC is currently considered an Alpha release, so help us make it better by adding to the [Issues Page](https://github.com/webappsolution/flow-mvc/issues) where 
 necessary. Please free to reach out to us and lets us know what you like, love, hate, feature requests, defects, 
-etc on the [Issues Page](https://github.com/WebAppSolutionInc/flow-mvc/issues).
+etc on the [Issues Page](https://github.com/webappsolution/flow-mvc/issues).
 
